@@ -15,6 +15,7 @@
  */
 
 namespace common\panda;
+use Yii;
 // record each url request basic info for debug.
 class RecordRequest extends Record
 {
@@ -22,13 +23,23 @@ class RecordRequest extends Record
     public $request_url;    // 请求完整地址
     public $request_params; // 请求参数
     public $request_time;   // 请求时间
+    public $user_ip;        // 用户请求IP
     public function __construct()
     {
         parent::__construct();
         $this->type = self::RECORD_TYPE_REQUEST;
     }
     public function log(){
-
+        $this->request_time = date('Y-m-d H:i:s',time());
+        $this->request_url = Yii::$app->request->getHostInfo().Yii::$app->request->url;
+        $this->request_method = Yii::$app->request->method;
+        if(Yii::$app->request->isGet){
+            $this->request_params = Yii::$app->request->get;
+        }else if(Yii::$app->request->isPost){
+            $this->request_params = Yii::$app->request->post;
+        }
+        $this->request_time = date('Y-m-d H:i:s',time());
+        $this->user_ip = Yii::$app->request->userIP;
     }
     /* 数据格式
      * request_method|request_url|request_params|request_time|
@@ -39,6 +50,9 @@ class RecordRequest extends Record
         $o->request_url = $this->request_url;
         $o->request_params = $this->request_params;
         $o->request_time = $this->request_time;
+        $o->user_ip = $this->user_ip;
+        $this->data = $o;
+        parent::write($stream);
     }
     public function read(BinaryStream $stream,$raw_bytes){
         $data = $stream->readStringClean($raw_bytes);

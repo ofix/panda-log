@@ -32,8 +32,6 @@ use yii\db\Query;
 
 class Panda
 {
-    public $request_time;     // 请求开始时间
-    public $response_time;    // 请求结束时间
     protected static $_instance = null;
     protected static $_data = null;
     protected static $last_flush_begin = 0; //上次写入文件的开始位置
@@ -41,36 +39,18 @@ class Panda
     protected static $last_flush_bytes = 0; //上次写入文件的字节数量
     private $log_file_prefix  = 'panda_log_'; //log日志前缀
     private $default_save_dir = __DIR__ . '/../../company/runtime/panda_log/';
-    private $company_id;     // 当前登录的公司ID
-    private $user_id;        // 当前登录的用户ID
-    private $company_name;   // 登录的公司名称
-    private $staff_name;     // 登录的员工名称
-    private $staff_mobile;   // 员工手机号
-    private $login_user;     // 登录用户名
-    private $login_pwd;      // 登录密码
-    protected $record_login; // 记录登录的信息
     private $is_rpc;         // 是否是RPC远程调用
-    const FLAG_ARRAY  = 1;    // 格式化数组
-    const FLAG_SQL    = 2;    // 格式化SQL
-    const FLAG_OBJECT = 3;    // 格式化对象
-    const FLAG_STRING = 4;    // 格式化字符串
     const FLAG_HTTP_REQUEST = 5; // 格式化每次请求的数据
     const META_BYTES_ITEM = 5; //每项数据占用的字节数
-    //请求记录
-    protected $request_method; // 请求方式
-    protected $request_url;    // 请求URL地址
-    protected $request_params; // 请求参数
 
     private function __construct()
     {
-        $this->need_login = true;
-        $this->is_rpc = false;
+        $this->_data = [];
     }
     public static function instance()
     {
         if (is_null(self::$_instance) || !isset(self::$_instance)) {
             self::$_instance = new self();
-            self::$_data = [];
         }
         return self::$_instance;
     }
@@ -82,41 +62,6 @@ class Panda
     }
     public function getFlushEnd(){
         return self::$last_flush_end;
-    }
-    /*
-     * @func 获取登录的额外信息
-     */
-    protected function getLoginInfo(){
-        if((!$this->is_rpc) && $this->record_login){
-            $this->user_id = Yii::$app->user->getId();
-            $this->company_id = Yii::$app->user->getCompanyId();
-            $company = Company::findOne(['id'=>$this->company_id]);
-            if($company){
-                $this->company_name = $company->name;
-            }
-            $staff = UserCompany::findOne(['company_id'=>$this->company_id,'user_id'=>$this->user_id]);
-            if($staff){
-                $this->staff_name   = $staff->staff_name;
-                $this->staff_mobile = $staff->staff_mobile;
-            }
-            $user = User::findOne(['id'=>$this->user_id]);
-            if($user){
-                $this->login_user = $user->mobile;
-                $this->login_pwd  = $user->password_hash;
-            }
-        }
-    }
-    /*
-     * @func 获取请求信息
-     */
-    protected function recordRequestInfo(){
-
-    }
-    /*
-     * 请求之前记录必要的用户信息
-     */
-    public function beforeRequest(){
-        $this->request_time = date('Y-m-d H:i:s',time());
     }
 
     public function log($content = '')
