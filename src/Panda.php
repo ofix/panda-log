@@ -99,6 +99,8 @@ class Panda
             BinaryWriter::append($hFile,$bytes);
             BinaryWriter::close($hFile);
         }
+        self::$data = []; //存盘的时候，必须释放掉变量内存,因为这个是单例
+        //否则循环测试写入的时候，会出问题。
     }
 
     /*
@@ -145,8 +147,8 @@ class Panda
         return $o->readUint32();
     }
     /*
-     * version|row_length|row_type|row_data
-     *    1字节|2字节|1字节|2^16字节以内
+     * row_length|row_type|row_data
+     *    4字节|1字节|2^16字节以内
      */
     protected function getItemLength(){
         $bytes = 0;
@@ -192,6 +194,9 @@ class Panda
         BinaryWriter::append($hFile,$bytes);
     }
     public function decode($page_offset,$page_size=20,$asc=true){
+        if($page_size <1){
+            return [];
+        }
         // 解析meta二进制文件
         $metaFile = $this->getMetaFile();
         $hFile = BinaryReader::open($metaFile);
@@ -199,6 +204,9 @@ class Panda
         $totalItems = $this->getMetaItemCount($hFile);
         //获取真实数据所在偏移meta信息
         $pos = self::calcItemPos($totalItems,$page_offset,$page_size,$asc);
+        if(is_null($pos)){
+            return ['total'=>$totalItems,'data'=>[]];
+        }
         $rawMeta = BinaryReader::getRawBytesFromFile($hFile,$pos->offset,$pos->size);
         $arrMetaItem = self::decodeMetaItem($rawMeta,$pos->size/8);
         BinaryReader::close($hFile);
@@ -210,7 +218,7 @@ class Panda
             $items[] = $this->decodeLogData($hFile,$v['start'],$v['end']);
         }
         BinaryReader::close($hFile);
-        return $items;
+        return ['total'=>$totalItems,'data'=>$items];
     }
 
     public function decodeLogData($hFile,$start,$end){
@@ -223,7 +231,7 @@ class Panda
         while($byteCount){
             $len = $stream->readUint32();
             $type = $stream->readUByte();
-            $items[] =['type'=>$type,'data'=>$this->decodeRecord($type,$len-Record::META_BYTES,$stream)];
+            $items[] =['type'=>$type,'record'=>$this->decodeRecord($type,$len-Record::META_BYTES,$stream)];
             $byteCount -= $len;
         }
         return $items;
@@ -263,6 +271,8 @@ class Panda
                 $o->read($stream,$byte_count);
                 break;
             }
+            default:
+                break;
         }
         if($o) {
             return $o->getData();
@@ -289,10 +299,10 @@ class Panda
      * @para $asc true:按写入时间顺序读取,false:按写入时间倒序读取
      */
     public function calcItemPos($total,$page_offset,$page_size,$asc=true){
-        if($page_offset>$total){
-            return -1;
+        if($page_offset>=$total){
+            return null;
         }
-        if(($page_offset+$page_size)>$total){
+        if(($page_offset+$page_size)>=$total){
             $page_size = $total-$page_offset;
         }
         $o= new \stdClass();
