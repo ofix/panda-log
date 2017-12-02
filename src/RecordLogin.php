@@ -78,5 +78,13 @@ class RecordLogin extends Record
         list($this->login_name, $this->login_pwd,
              $this->user_id, $this->company_id,
              $this->staffname, $this->staff_mobile) = explode(self::EOL, $data);
+        $o = new \stdClass();
+        $o->login_name = $this->login_name;
+        $o->login_pwd = $this->login_pwd;
+        $o->user_id = $this->user_id;
+        $o->company_id = $this->company_id;
+        $o->staff_name = $this->staff_name;
+        $o->staff_mobile = $this->staff_mobile;
+        $this->data = $o;
     }
 }

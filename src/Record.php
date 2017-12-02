@@ -49,11 +49,11 @@ abstract class Record
         return $this->data;
     }
     public function getLength(){
-        return strlen($this->data)+5;
+        return strlen($this->data)+self::META_BYTES;
     }
     public function write(BinaryStream $stream){
         $len = strlen($this->data);
-        $stream->writeUInt32($len); // 4个字节长度
+        $stream->writeUInt32($len+self::META_BYTES); // 4个字节长度
         $stream->writeUByte($this->type);
         $stream->writeStringClean($this->data); //剩下的都是数据字节
     }

@@ -54,11 +54,14 @@ class BinaryWriter{
         }else{
             $hFile = fopen($filePath,"wb+");
             fclose($hFile);
-            return fopen($filePath,"rb+");
+            $hFile = fopen($filePath,"rb+");
+            @flock($hFile, LOCK_EX);
+            return $hFile;
         }
     }
 
     public static function close($hFile){
+        @flock($hFile, LOCK_UN);
         fclose($hFile);
     }
 

@@ -20,17 +20,23 @@ use common\models\UserCompany;
 class PandaTester
 {
   public static function testBinaryReader(){
-        self::testWriteBinary();
-        self::testWriteBinary2();
-        // self::testReadBinary();
+//      for($i=0; $i<100;$i++) {
+//          self::testWriteBinary();
+//          self::testWriteBinary2();
+//          usleep(100000);
+//      }
+       self::testReadBinary();
         die();
   }
 
   public static function testReadBinary(){
       $panda = Panda::instance();
-      $data = $panda->decode(6,2,true);
+      $page_offset = rand(0,1000);
+      $page_size = rand(2,50);
+      $data = $panda->decode($page_offset,$page_size,true);
+      echo "page_offset = ".$page_offset.PHP_EOL;
+      echo "page_size = ".$page_size.PHP_EOL;
       echo json_encode($data,JSON_UNESCAPED_UNICODE);
-      die();
   }
 
   public static function testWriteBinary2(){
@@ -41,9 +47,9 @@ class PandaTester
       $panda->log($json);
       $panda->log($o);
       $panda->flush();
-      echo '写入文件起始地址:0x'.dechex($panda->getFlushBegin()).'H'.PHP_EOL;
-      echo '写入文件结束地址:0x'.dechex($panda->getFlushEnd()).'H'.PHP_EOL;
-      echo '写入文件字节数量:'.dechex($panda->getFlushBytes()).PHP_EOL;
+//      echo '写入文件起始地址:0x'.dechex($panda->getFlushBegin()).'H'.PHP_EOL;
+//      echo '写入文件结束地址:0x'.dechex($panda->getFlushEnd()).'H'.PHP_EOL;
+//      echo '写入文件字节数量:'.dechex($panda->getFlushBytes()).PHP_EOL;
   }
 
   public static function testWriteBinary(){
@@ -61,9 +67,9 @@ class PandaTester
           $panda->log($str);
           $panda->log($sql);;
           $panda->flush();
-          echo '写入文件起始地址:0x'.dechex($panda->getFlushBegin()).'H'.PHP_EOL;
-          echo '写入文件结束地址:0x'.dechex($panda->getFlushEnd()).'H'.PHP_EOL;
-          echo '写入文件字节数量:'.dechex($panda->getFlushBytes()).PHP_EOL;
+//          echo '写入文件起始地址:0x'.dechex($panda->getFlushBegin()).'H'.PHP_EOL;
+//          echo '写入文件结束地址:0x'.dechex($panda->getFlushEnd()).'H'.PHP_EOL;
+//          echo '写入文件字节数量:'.dechex($panda->getFlushBytes()).PHP_EOL;
       }
   }
 }
