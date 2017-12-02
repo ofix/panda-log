@@ -18,5 +18,15 @@ namespace common\panda;
 
 class RecordSql extends Record
 {
-
+    public function __construct()
+    {
+        parent::__construct();
+        $this->type = self::RECORD_TYPE_SQL;
+    }
+    public function log($sql){
+        $this->data = $sql;
+    }
+    public function read(BinaryStream $stream,$raw_bytes){
+        $this->data = $stream->readStringClean($raw_bytes);
+    }
 }

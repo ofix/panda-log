@@ -16,8 +16,18 @@
 
 namespace common\panda;
 
-
-class RecordObject
+class RecordObject extends Record
 {
-
+    public function __construct()
+    {
+        parent::__construct();
+        $this->type = self::RECORD_TYPE_OBJECT;
+    }
+    public function log($object){
+        $this->data = json_encode($object);
+    }
+    public function read(BinaryStream $stream,$raw_bytes){
+        $data = $stream->readStringClean($raw_bytes);
+        $this->data = json_decode($data);
+    }
 }

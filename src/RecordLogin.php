@@ -15,17 +15,68 @@
  */
 
 namespace common\panda;
+use common\models\Company;
+use common\models\User;
+use common\models\UserCompany;
+use Yii;
 // record web backend basic login information for debug.
 class RecordLogin extends Record
 {
-    public static $user_name = ''; // 用户名
-    public static $user_pwd = '';  // 用户密码
-    public static $company_id = 0; // 公司ID
-    public static $company_name = ''; // 公司名称
-    public static function write($hFile){
-
+    public $login_name;   // 登录用户名
+    public $login_pwd;    // 登录用户密码
+    public $user_id;      // 用户ID
+    public $company_id;   // 公司ID
+    public $company_name; // 公司名称
+    public $staff_name;   // 用户名
+    public $staff_mobile; // 用户手机
+    public function __construct()
+    {
+        parent::__construct();
+        $this->type = self::RECORD_TYPE_LOGIN;
     }
-    public static function read($hFile,$offset){
-
+    public function log(){
+        $this->user_id = Yii::$app->user->getId();
+        $this->company_id = Yii::$app->user->getCompanyId();
+        $company = Company::findOne(['id'=>$this->company_id]);
+        if($company){
+            $this->company_name = $company->name;
+        }else{
+            $this->company_name = self::EMPTY_PLACE_HOLDER;
+        }
+        $staff = UserCompany::findOne(['company_id'=>$this->company_id,'user_id'=>$this->user_id]);
+        if($staff){
+            $this->staff_name   = $staff->staff_name;
+            $this->staff_mobile = $staff->staff_mobile;
+        }else{
+            $this->staff_name   = self::EMPTY_PLACE_HOLDER;
+            $this->staff_mobile = self::EMPTY_PLACE_HOLDER;
+        }
+        $user = User::findOne(['id'=>$this->user_id]);
+        if($user){
+            $this->login_name = $user->mobile;
+            $this->login_pwd  = $user->password_hash;
+        }else{
+            $this->login_name = self::EMPTY_PLACE_HOLDER;
+            $this->login_pwd = self::EMPTY_PLACE_HOLDER;
+        }
+    }
+    /* 数据格式
+     * login_name|login_pwd|user_id|company_id|staff_name|staff_mobile
+     */
+    public function write(BinaryStream $stream){
+        $data  = $this->login_name.self::EOL;
+        $data .= $this->login_pwd.self::EOL;
+        $data .= $this->user_id.self::EOL;
+        $data .= $this->company_id.self::EOL;
+        $data .= $this->staff_name.self::EOL;
+        $data .= $this->staff_mobile.self::EOL;
+        $this->data = $data;
+        parent::write($stream);
+    }
+    public function read(BinaryStream $stream,$raw_bytes){
+        $data = $stream->readStringClean($raw_bytes);
+        list($this->login_name, $this->login_pwd,
+             $this->user_id, $this->company_id,
+             $this->staffname, $this->staff_mobile) = explode(self::EOL, $data);
     }
 }

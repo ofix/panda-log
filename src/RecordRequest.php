@@ -15,17 +15,35 @@
  */
 
 namespace common\panda;
-// record each request basic info for debug.
+// record each url request basic info for debug.
 class RecordRequest extends Record
 {
-    public static $request_method; // 请求方式
-    public static $request_url; // 请求完整地址
-    public static $request_params; // 请求参数
-    public static $request_time; // 请求时间
-    public static function read($hFile,$offset){
+    public $request_method; // 请求方式
+    public $request_url;    // 请求完整地址
+    public $request_params; // 请求参数
+    public $request_time;   // 请求时间
+    public function __construct()
+    {
+        parent::__construct();
+        $this->type = self::RECORD_TYPE_REQUEST;
+    }
+    public function log(){
 
     }
-    public static function write($hFile){
-
+    /* 数据格式
+     * request_method|request_url|request_params|request_time|
+     */
+    public function write(BinaryStream $stream){
+        $o = new \stdClass();
+        $o->request_method = $this->request_method;
+        $o->request_url = $this->request_url;
+        $o->request_params = $this->request_params;
+        $o->request_time = $this->request_time;
+    }
+    public function read(BinaryStream $stream,$raw_bytes){
+        $data = $stream->readStringClean($raw_bytes);
+        list($this->login_name, $this->login_pwd,
+            $this->user_id, $this->company_id,
+            $this->staffname, $this->staff_mobile) = explode(self::EOL, $data);
     }
 }

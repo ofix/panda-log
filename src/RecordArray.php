@@ -17,5 +17,16 @@ namespace common\panda;
 
 class RecordArray extends Record
 {
-
+    public function __construct()
+    {
+        parent::__construct();
+        $this->type = self::RECORD_TYPE_OBJECT;
+    }
+    public function log($array){
+        $this->data = json_encode($array);
+    }
+    public function read(BinaryStream $stream,$raw_bytes){
+        $data = $stream->readStringClean($raw_bytes);
+        $this->data = json_decode($data);
+    }
 }

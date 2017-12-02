@@ -21,14 +21,30 @@ namespace common\panda;
  */
 abstract class Record
 {
-    static $record_type;
-    public static function read($hFile,$offset){
+    const RECORD_TYPE_EMPTY  = 1;
+    const RECORD_TYPE_STRING = 2;
+    const RECORD_TYPE_SQL    = 3;
+    const RECORD_TYPE_ARRAY  = 4;
+    const RECORD_TYPE_OBJECT = 5;
+    const RECORD_TYPE_REQUEST= 6;
+    const RECORD_TYPE_LOGIN  = 7;
+    const EMPTY_PLACE_HOLDER = 'nul'; //空字符串占位符
+    const EOL = '\n'; //分割符
+    public $type;
+    public $data;
+    public function __construct()
+    {
+        $this->type = self::RECORD_TYPE_EMPTY;
+        $this->data = null;
+    }
+
+    public function read(BinaryStream $stream,$raw_bytes){
 
     }
-    public static function decode($raw_bytes){
-
-    }
-    public static function write($hFile){
-
+    public function write(BinaryStream $stream){
+        $len = strlen($this->data);
+        $stream->writeUInt32($len); // 4个字节长度
+        $stream->writeUByte($this->type);
+        $stream->writeStringClean($this->data); //剩下的都是数据字节
     }
 }
