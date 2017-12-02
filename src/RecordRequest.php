@@ -38,7 +38,6 @@ class RecordRequest extends Record
         }else if(Yii::$app->request->isPost){
             $this->request_params = Yii::$app->request->post;
         }
-        $this->request_time = date('Y-m-d H:i:s',time());
         $this->user_ip = Yii::$app->request->userIP;
     }
     /* 数据格式
@@ -54,8 +53,8 @@ class RecordRequest extends Record
         $this->data = $o;
         parent::write($stream);
     }
-    public function read(BinaryStream $stream,$raw_bytes){
-        $data = $stream->readStringClean($raw_bytes);
+    public function read(BinaryStream $stream,$byte_count){
+        $data = $stream->readStringClean($byte_count);
         list($this->login_name, $this->login_pwd,
             $this->user_id, $this->company_id,
             $this->staffname, $this->staff_mobile) = explode(self::EOL, $data);

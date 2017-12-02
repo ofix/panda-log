@@ -26,7 +26,7 @@ class RecordString extends Record
     public function log($string){
         $this->data = $string;
     }
-    public function read(BinaryStream $stream,$raw_bytes){
-        $this->data = $stream->readStringClean($raw_bytes);
+    public function read(BinaryStream $stream,$byte_count){
+        $this->data = $stream->readStringClean($byte_count);
     }
 }

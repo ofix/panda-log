@@ -25,8 +25,8 @@ class RecordArray extends Record
     public function log($array){
         $this->data = json_encode($array);
     }
-    public function read(BinaryStream $stream,$raw_bytes){
-        $data = $stream->readStringClean($raw_bytes);
+    public function read(BinaryStream $stream,$byte_count){
+        $data = $stream->readStringClean($byte_count);
         $this->data = json_decode($data);
     }
 }

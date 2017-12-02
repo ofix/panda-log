@@ -28,8 +28,9 @@ abstract class Record
     const RECORD_TYPE_OBJECT = 5;
     const RECORD_TYPE_REQUEST= 6;
     const RECORD_TYPE_LOGIN  = 7;
-    const EMPTY_PLACE_HOLDER = 'nul'; //空字符串占位符
-    const EOL = '\n'; //分割符
+    const EMPTY_PLACE_HOLDER = 'nul'; // 空字符串占位符
+    const EOL = '\n';                 // 分割符
+    const META_BYTES = 5;             // 每项数据占用的字节数
     public $type;
     public $data;
     public function __construct()
@@ -37,9 +38,18 @@ abstract class Record
         $this->type = self::RECORD_TYPE_EMPTY;
         $this->data = null;
     }
+    /*
+     * @para stream BinaryStream object
+     * @para $byte_count 字节数
+     */
+    public function read(BinaryStream $stream,$byte_count){
 
-    public function read(BinaryStream $stream,$raw_bytes){
-
+    }
+    public function getData(){
+        return $this->data;
+    }
+    public function getLength(){
+        return strlen($this->data)+5;
     }
     public function write(BinaryStream $stream){
         $len = strlen($this->data);

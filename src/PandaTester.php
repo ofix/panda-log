@@ -20,9 +20,9 @@ use common\models\UserCompany;
 class PandaTester
 {
   public static function testBinaryReader(){
-        // self::testWriteBinary();
-        // self::testWriteBinary2();
-        self::testReadBinary();
+        self::testWriteBinary();
+        self::testWriteBinary2();
+        // self::testReadBinary();
         die();
   }
 

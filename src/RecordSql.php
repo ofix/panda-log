@@ -16,6 +16,10 @@
 
 namespace common\panda;
 
+use yii\base\Model;
+use yii\db\Query;
+use Yii;
+
 class RecordSql extends Record
 {
     public function __construct()
@@ -24,9 +28,13 @@ class RecordSql extends Record
         $this->type = self::RECORD_TYPE_SQL;
     }
     public function log($sql){
-        $this->data = $sql;
+        if($sql instanceof Model){
+            $this->data = Yii::$app->db->createCommand($sql)->getRawSql();
+        }else if($sql instanceof Query){
+            $this->data = $sql->createCommand()->getRawSql();
+        }
     }
-    public function read(BinaryStream $stream,$raw_bytes){
-        $this->data = $stream->readStringClean($raw_bytes);
+    public function read(BinaryStream $stream,$byte_count){
+        $this->data = $stream->readStringClean($byte_count);
     }
 }

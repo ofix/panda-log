@@ -22,30 +22,25 @@
  * 04. The panda log will split every request in a block and make it user-friendly for reading.
  */
 namespace common\panda;
-// following require class should be replaced by your own project files
-use common\models\Company;
-use common\models\User;
-use common\models\UserCompany;
-use Yii;
+
 use yii\base\Model;
 use yii\db\Query;
 
 class Panda
 {
     protected static $_instance = null;
-    protected static $_data = null;
+    protected static $data = null;
     protected static $last_flush_begin = 0; //上次写入文件的开始位置
     protected static $last_flush_end   = 0; //上次写入文件的结束位置
     protected static $last_flush_bytes = 0; //上次写入文件的字节数量
-    private $log_file_prefix  = 'panda_log_'; //log日志前缀
+    private $prefix  = 'panda_log_'; //log日志前缀
     private $default_save_dir = __DIR__ . '/../../company/runtime/panda_log/';
     private $is_rpc;         // 是否是RPC远程调用
     const FLAG_HTTP_REQUEST = 5; // 格式化每次请求的数据
-    const META_BYTES_ITEM = 5; //每项数据占用的字节数
 
     private function __construct()
     {
-        $this->_data = [];
+        self::$data = [];
     }
     public static function instance()
     {
@@ -67,56 +62,22 @@ class Panda
     public function log($content = '')
     {
         if(is_array($content)){
-            self::logArray($content);
+            $o = new RecordArray();
+            $o->log($content);
+            self::$data[] = $o;
         }else if(($content instanceof Query) || ($content instanceof Model)){
-            self::logSql($content);
+            $o = new RecordSql();
+            $o->log($content);
+            self::$data[] = $o;
         }else if(is_object($content)){
-            self::logObject($content);
+            $o = new RecordObject();
+            $o->log($content);
+            self::$data[] = $o;
         }else if(is_string($content)){
-            self::logStr($content);
+            $o = new RecordString();
+            $o->log($content);
+            self::$data[] = $o;
         }
-    }
-
-    /*
-     * @func 打印数组
-     */
-    protected static function logArray($content)
-    {
-        $data = json_encode($content);
-        $len = strlen($data)+self::META_BYTES_ITEM;
-        self::$_data[] = ['len'=>$len,'data' => json_encode($content), 'type' => self::FLAG_ARRAY];
-    }
-    protected static function logSql(&$content)
-    {
-        $data = '';
-        if($content instanceof Model){
-            $data = Yii::$app->db->createCommand($content)->getRawSql();
-        }else if($content instanceof Query){
-            $data = $content->createCommand()->getRawSql();
-        }
-        $len = strlen($data)+ self::META_BYTES_ITEM;
-        self::$_data[] = ['len'=>$len,'data' => $data, 'type' => self::FLAG_SQL];
-    }
-    protected static function logStr($content){
-        $len = strlen($content)+self::META_BYTES_ITEM;
-        self::$_data[] = ['len'=>$len, 'data' =>$content,'type'=>self::FLAG_STRING];
-    }
-    protected static function logObject($content)
-    {
-        $o = json_encode($content);
-        $len = strlen($o)+self::META_BYTES_ITEM;
-        self::$_data[] = ['len'=>$len, 'data' => json_encode($content), 'type' => self::FLAG_OBJECT];
-    }
-
-    public static function ensureDir($dir, $mode = 0777)
-    {
-        if (is_dir($dir) || @mkdir($dir, $mode)) {
-            return TRUE;
-        }
-        if (!self::ensureDir(dirname($dir), $mode)) {
-            return FALSE;
-        }
-        return @mkdir($dir, $mode);
     }
 
     /*
@@ -126,15 +87,13 @@ class Panda
     {
         $this->saveMetaFile(); //保存元数据
         $logFile = $this->getLogFile();
-        if (count(self::$_data)) {
+        if (count(self::$data)) {
             //写入二进制流
             $hFile = BinaryWriter::open($logFile);
             $o = new BinaryStream();
             $o->setEndian(Endian::BIG_ENDIAN);
-            foreach (self::$_data as $v) {
-                $o->writeUInt32($v['len']); // 4个字节长度
-                $o->writeUByte($v['type']); // 1个字节类型
-                $o->writeStringClean($v['data']); //剩下的都是数据字节
+            foreach (self::$data as $v) {
+                $v->write($o);
             }
             $bytes = $o->toBytes();
             BinaryWriter::append($hFile,$bytes);
@@ -191,23 +150,13 @@ class Panda
      */
     protected function getItemLength(){
         $bytes = 0;
-        if (count(self::$_data)) {
-            foreach (self::$_data as $v) {
-                $bytes += $v['len'];
+        if (count(self::$data)) {
+            foreach (self::$data as $v) {
+                $bytes += $v->getLength();
             }
             return $bytes;
         }
         return 0;
-    }
-    protected function getMetaFile()
-    {
-        $now = Date('Y_m_d', time());
-        return realpath($this->default_save_dir) . DIRECTORY_SEPARATOR . $this->log_file_prefix . 'meta_' . $now . '.idx';
-    }
-
-    protected function getLogFile(){
-        $now = Date('Y_m_d', time());
-        return realpath($this->default_save_dir) . DIRECTORY_SEPARATOR . $this->log_file_prefix. $now . '.pda';
     }
 
     protected function saveHeader($hFile){
@@ -258,34 +207,67 @@ class Panda
         $hFile = BinaryReader::open($logFile);
         $items = [];
         foreach($arrMetaItem as $k=>$v){
-            $items[] = self::decodeLogData($hFile,$v['start'],$v['end']);
+            $items[] = $this->decodeLogData($hFile,$v['start'],$v['end']);
         }
         BinaryReader::close($hFile);
         return $items;
     }
 
-    public static function decodeLogData($hFile,$start,$end){
+    public function decodeLogData($hFile,$start,$end){
         $items = [];
         $offset = $start;
         $byteCount = $end-$start+1;
         $rawData = BinaryReader::getRawBytesFromFile($hFile,$offset,$byteCount);
-        $o = new BinaryStream($rawData);
-        $o->setEndian(Endian::BIG_ENDIAN);
+        $stream= new BinaryStream($rawData);
+        $stream->setEndian(Endian::BIG_ENDIAN);
         while($byteCount){
-            $len = $o->readUint32();
-            $type = $o->readUByte();
-            $data = $o->readStringClean($len-self::META_BYTES_ITEM);
-            $items[] =['type'=>$type,'data'=>self::parseData($type,$data)];
+            $len = $stream->readUint32();
+            $type = $stream->readUByte();
+            $items[] =['type'=>$type,'data'=>$this->decodeRecord($type,$len-Record::META_BYTES,$stream)];
             $byteCount -= $len;
         }
         return $items;
     }
 
-    public static function parseData($type,$data){
-        if($type == self::FLAG_ARRAY || $type == self::FLAG_OBJECT) {
-            return json_decode($data);
+    public function decodeRecord($type,$byte_count,$stream){
+        $data = null;
+        $o = null;
+        switch($type){
+            case Record::RECORD_TYPE_STRING:{
+                $o = new RecordString();
+                $o->read($stream,$byte_count);
+                break;
+            }
+            case Record::RECORD_TYPE_OBJECT:{
+                $o = new RecordObject();
+                $o->read($stream,$byte_count);
+                break;
+            }
+            case Record::RECORD_TYPE_ARRAY:{
+                $o = new RecordArray();
+                $o->read($stream,$byte_count);
+                break;
+            }
+            case Record::RECORD_TYPE_SQL:{
+                $o = new RecordSql();
+                $o->read($stream,$byte_count);
+                break;
+            }
+            case Record::RECORD_TYPE_REQUEST:{
+                $o = new RecordRequest();
+                $o->read($stream,$byte_count);
+                break;
+            }
+            case Record::RECORD_TYPE_LOGIN:{
+                $o = new RecordLogin();
+                $o->read($stream,$byte_count);
+                break;
+            }
         }
-        return $data;
+        if($o) {
+            return $o->getData();
+        }
+        return null;
     }
 
     public static function decodeMetaItem($rawBytes,$count){
@@ -322,5 +304,25 @@ class Panda
             $o->size = $page_size*8;
         }
         return $o;
+    }
+    public static function ensureDir($dir, $mode = 0777)
+    {
+        if (is_dir($dir) || @mkdir($dir, $mode)) {
+            return TRUE;
+        }
+        if (!self::ensureDir(dirname($dir), $mode)) {
+            return FALSE;
+        }
+        return @mkdir($dir, $mode);
+    }
+    protected function getMetaFile()
+    {
+        $now = Date('Y_m_d', time());
+        return realpath($this->default_save_dir) . DIRECTORY_SEPARATOR . $this->prefix . 'meta_' . $now . '.idx';
+    }
+
+    protected function getLogFile(){
+        $now = Date('Y_m_d', time());
+        return realpath($this->default_save_dir) . DIRECTORY_SEPARATOR . $this->prefix. $now . '.pda';
     }
 }

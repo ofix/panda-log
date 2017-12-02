@@ -73,8 +73,8 @@ class RecordLogin extends Record
         $this->data = $data;
         parent::write($stream);
     }
-    public function read(BinaryStream $stream,$raw_bytes){
-        $data = $stream->readStringClean($raw_bytes);
+    public function read(BinaryStream $stream,$byte_count){
+        $data = $stream->readStringClean($byte_count);
         list($this->login_name, $this->login_pwd,
              $this->user_id, $this->company_id,
              $this->staffname, $this->staff_mobile) = explode(self::EOL, $data);
