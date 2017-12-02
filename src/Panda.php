@@ -1,8 +1,19 @@
 <?php
 /*
- * Author: code lighter
- * Date: 2017/11/24
- * Note: This log class is aim to help PHP developers to find bugs easily.
+ * This file is part of panda-log.
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the MIT-LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @author    code lighter
+ * @copyright https://github.com/ofix
+ * @we-chat   981326632
+ * @license   http://www.opensource.org/licenses/mit-license.php MIT License
+ * @Date      2017/11/24
+ * @Time      18:00
+ *
+ * @desc Note: This log class is aim to help PHP developers to find bugs easily.
  * For the version 0.11, it includes following abilities.
  * 01. format dumping SQL sentences.
  * 02. before Panda log called the first time, it will record necessary information about login user
@@ -10,8 +21,8 @@
  * 03. it can also format object and string rely on front-end CodeMore plugin.
  * 04. The panda log will split every request in a block and make it user-friendly for reading.
  */
-
 namespace common\panda;
+// following require class should be replaced by your own project files
 use common\models\Company;
 use common\models\User;
 use common\models\UserCompany;
@@ -37,17 +48,22 @@ class Panda
     private $staff_mobile;   // 员工手机号
     private $login_user;     // 登录用户名
     private $login_pwd;      // 登录密码
-    private $flag_login_user;// 是否记录登录的用户信息
+    protected $record_login; // 记录登录的信息
     private $is_rpc;         // 是否是RPC远程调用
     const FLAG_ARRAY  = 1;    // 格式化数组
     const FLAG_SQL    = 2;    // 格式化SQL
     const FLAG_OBJECT = 3;    // 格式化对象
     const FLAG_STRING = 4;    // 格式化字符串
+    const FLAG_HTTP_REQUEST = 5; // 格式化每次请求的数据
     const META_BYTES_ITEM = 5; //每项数据占用的字节数
+    //请求记录
+    protected $request_method; // 请求方式
+    protected $request_url;    // 请求URL地址
+    protected $request_params; // 请求参数
 
     private function __construct()
     {
-        $this->flag_login_user = true;
+        $this->need_login = true;
         $this->is_rpc = false;
     }
     public static function instance()
@@ -68,10 +84,10 @@ class Panda
         return self::$last_flush_end;
     }
     /*
-     * 请求之前记录必要的用户信息
+     * @func 获取登录的额外信息
      */
-    public function beforeRequest(){
-        if($this->flag_login_user && (!$this->is_rpc)){
+    protected function getLoginInfo(){
+        if((!$this->is_rpc) && $this->record_login){
             $this->user_id = Yii::$app->user->getId();
             $this->company_id = Yii::$app->user->getCompanyId();
             $company = Company::findOne(['id'=>$this->company_id]);
@@ -89,6 +105,17 @@ class Panda
                 $this->login_pwd  = $user->password_hash;
             }
         }
+    }
+    /*
+     * @func 获取请求信息
+     */
+    protected function recordRequestInfo(){
+
+    }
+    /*
+     * 请求之前记录必要的用户信息
+     */
+    public function beforeRequest(){
         $this->request_time = date('Y-m-d H:i:s',time());
     }
 

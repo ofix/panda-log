@@ -1,8 +1,19 @@
 <?php
 /*
- * Author: code lighter
- * Date: 2017/11/30 0030
- * Time: 上午 9:28
+ * This file is part of panda-log.
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the MIT-LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @author    code lighter
+ * @copyright https://github.com/ofix
+ * @we-chat   981326632
+ * @license   http://www.opensource.org/licenses/mit-license.php MIT License
+ * @Date      2017/11/30
+ * @Time      9:28
+ *
+ * @desc binary stream is a wrapper for PHP pack/unpack functions
  */
 
 namespace common\panda;
