@@ -23,17 +23,18 @@ class PandaTester
 //      for($i=0; $i<100;$i++) {
 //          self::testWriteBinary();
 //          self::testWriteBinary2();
-//          usleep(100000);
+//          usleep(1000);
 //      }
+//      return '写入成功';
        return self::testReadBinary();
   }
 
   public static function testReadBinary(){
       $panda = Panda::instance();
-      $page_offset = rand(0,1000);
-      $page_size = rand(2,50);
+      $page_offset = rand(0,100);
+      $page_size = rand(1,10);
       $data = $panda->decode($page_offset,$page_size,true);
-      return json_encode($data,JSON_UNESCAPED_UNICODE);
+      return $data;
   }
 
   public static function testWriteBinary2(){
