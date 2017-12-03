@@ -63,7 +63,7 @@ class RecordLogin extends Record
     /* 数据格式
      * login_name|login_pwd|user_id|company_id|staff_name|staff_mobile
      */
-    public function write(BinaryStream $stream){
+    public function write(BinaryStream $stream,$debug_len){
         $data  = $this->login_name.self::EOL;
         $data .= $this->login_pwd.self::EOL;
         $data .= $this->user_id.self::EOL;
@@ -71,7 +71,7 @@ class RecordLogin extends Record
         $data .= $this->staff_name.self::EOL;
         $data .= $this->staff_mobile.self::EOL;
         $this->data = $data;
-        parent::write($stream);
+        parent::write($stream,$debug_len);
     }
     public function read(BinaryStream $stream,$byte_count){
         $data = $stream->readStringClean($byte_count);

@@ -23,6 +23,7 @@
  */
 namespace common\panda;
 
+use MongoDB\BSON\Binary;
 use yii\base\Model;
 use yii\db\Query;
 
@@ -140,8 +141,9 @@ class Panda
             $stream = new BinaryStream();
             $stream->setEndian(Endian::BIG_ENDIAN);
             foreach (self::$data as $k => $v) {
-                $v->write($stream);
-                $this->writeDebugInfo($stream,$k);
+                $debug_len = $debug_total_bytes = self::getDebugItemLength($k);
+                $v->write($stream,$debug_len);
+                $this->writeDebugInfo($stream,$k,$debug_len);
             }
             $bytes = $stream->toBytes();
             BinaryWriter::append($hFile,$bytes);
@@ -155,8 +157,7 @@ class Panda
     /*
      * @func 写入Debug信息
      */
-    private function writeDebugInfo(BinaryStream $stream,$k){
-        $debug_total_bytes = self::getDebugItemLength($k);
+    private function writeDebugInfo(BinaryStream $stream,$k,$debug_total_bytes){
         $stream->writeUInt16($debug_total_bytes);
         $stream->writeStringClean(json_encode(self::$debug_trace[$k]),$debug_total_bytes-Record::META_DEBUG_BYTES);
     }
@@ -213,8 +214,8 @@ class Panda
         return $o->readUint32();
     }
     /*
-     * row_length|row_type|row_data
-     *    4字节|1字节|2^16字节以内
+     * row_length|row_type|data_length|data|debug_length|debug
+     *    4字节|1字节|2字节|数据数据|2字节|调试数据
      */
     protected function getItemLength(){
         $bytes = 0;
@@ -301,7 +302,7 @@ class Panda
             $items[] = $this->decodeLogData($hFile,$v['start'],$v['end']);
         }
         BinaryReader::close($hFile);
-        return ['total'=>$totalItems,'data'=>$items];
+        return ['total'=>$totalItems,'records'=>$items];
     }
     /*
      * @func 解析多个请求日志数据
@@ -316,10 +317,18 @@ class Panda
         while($byteCount){
             $len = $stream->readUint32();
             $type = $stream->readUByte();
-            $items[] =['type'=>$type,'record'=>$this->decodeRecord($type,$len-Record::META_DATA_BYTES,$stream)];
+            $data_len = $stream->readUInt16();
+            $data = $this->decodeRecord($type,$data_len,$stream);
+            $debug_len = $stream->readUInt16();
+            $debug = $this->decodeDebug($debug_len,$stream);
+            $items[] = ['log'=>$data,'type'=>$type,'debug'=>$debug];
             $byteCount -= $len;
         }
         return $items;
+    }
+
+    public function decodeDebug($byte_count,BinaryStream $stream){
+        return json_decode($stream->readStringClean($byte_count));
     }
     /*
      * @func 解析一个请求日志数据

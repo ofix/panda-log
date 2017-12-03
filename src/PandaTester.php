@@ -20,21 +20,18 @@ use common\models\UserCompany;
 class PandaTester
 {
   public static function testBinaryReader(){
-//      for($i=0; $i<100;$i++) {
-//          self::testWriteBinary();
-//          self::testWriteBinary2();
-//          usleep(1000);
-//      }
-//
-
-      return self::testWriteBinary2();
-      // return self::testReadBinary();
+      for($i=0; $i<10;$i++) {
+          self::testWriteBinary();
+          self::testWriteBinary2();
+          usleep(1000);
+      }
+      return self::testReadBinary();
   }
 
   public static function testReadBinary(){
       $panda = Panda::instance();
-      $page_offset = rand(0,100);
-      $page_size = rand(1,10);
+      $page_offset = rand(0,10);
+      $page_size = rand(1,4);
       $data = $panda->decode($page_offset,$page_size,true);
       return $data;
   }
@@ -46,9 +43,7 @@ class PandaTester
       $panda = Panda::instance();
       $panda->log($json);
       $panda->log($o);
-      $debug = $panda->getDebugInfo();
       $panda->flush();
-      return $debug;
 //      echo '写入文件起始地址:0x'.dechex($panda->getFlushBegin()).'H'.PHP_EOL;
 //      echo '写入文件结束地址:0x'.dechex($panda->getFlushEnd()).'H'.PHP_EOL;
 //      echo '写入文件字节数量:'.dechex($panda->getFlushBytes()).PHP_EOL;
@@ -67,9 +62,7 @@ class PandaTester
           $panda->log( /***/ $o /**/);
           $panda->log(/**/$str);
           $panda->log(/*x#*/$sql);
-          $debug = $panda->getDebugInfo();
           $panda->flush();
-          return $debug;
 //          echo '写入文件起始地址:0x'.dechex($panda->getFlushBegin()).'H'.PHP_EOL;
 //          echo '写入文件结束地址:0x'.dechex($panda->getFlushEnd()).'H'.PHP_EOL;
 //          echo '写入文件字节数量:'.dechex($panda->getFlushBytes()).PHP_EOL;

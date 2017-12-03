@@ -43,7 +43,7 @@ class RecordRequest extends Record
     /* 数据格式
      * request_method|request_url|request_params|request_time|
      */
-    public function write(BinaryStream $stream){
+    public function write(BinaryStream $stream,$debug_len){
         $o = new \stdClass();
         $o->request_method = $this->request_method;
         $o->request_url = $this->request_url;
@@ -51,7 +51,7 @@ class RecordRequest extends Record
         $o->request_time = $this->request_time;
         $o->user_ip = $this->user_ip;
         $this->data = $o;
-        parent::write($stream);
+        parent::write($stream,$debug_len);
     }
     public function read(BinaryStream $stream,$byte_count){
         $data = $stream->readStringClean($byte_count);
