@@ -55,9 +55,10 @@ abstract class Record
     }
     public function write(BinaryStream $stream,$debug_len){
         $len = strlen($this->data);
-        $stream->writeUInt32($debug_len+$len+self::META_DATA_BYTES+self::META_DEBUG_BYTES+self::META_ITEM_BYTES); // 4个字节长度
+        $total_bytes = $debug_len+$len+self::META_DATA_BYTES+self::META_ITEM_BYTES;
+        $stream->writeUInt32($total_bytes); // 4个字节长度
         $stream->writeUByte($this->type);
-        $stream->writeUInt16($len);
+        $stream->writeUInt16($len+self::META_DATA_BYTES);
         $stream->writeStringClean($this->data,$len); //剩下的都是数据字节
     }
 }

@@ -63,11 +63,11 @@ class Panda
      */
     public function trace($trace1,$trace2,$para){
         $o = new \stdClass();
-        $o->class = $trace2['class'];
-        $o->function = $trace2['function'];
-        $o->type = $trace2['type'];
-        $o->line_no = $trace1['line'];
-        $o->args = $para;
+        $o->_cls = $trace2['class'];
+        $o->_func = $trace2['function'];
+        $o->_type = $trace2['type'];
+        $o->_line = $trace1['line'];
+        $o->_args = $para;
         return $o;
     }
 
@@ -141,7 +141,7 @@ class Panda
             $stream = new BinaryStream();
             $stream->setEndian(Endian::BIG_ENDIAN);
             foreach (self::$data as $k => $v) {
-                $debug_len = $debug_total_bytes = self::getDebugItemLength($k);
+                $debug_len = self::getDebugItemLength($k);
                 $v->write($stream,$debug_len);
                 $this->writeDebugInfo($stream,$k,$debug_len);
             }
@@ -197,12 +197,6 @@ class Panda
             self::$last_flush_end = $szItem;
             self::$last_flush_bytes = $szItem+1;
         }
-    }
-    /*
-     * @func 保存debug信息
-     */
-    protected function saveDebug(){
-
     }
     /*
      * @func 获取保存的日志文件大小
@@ -309,18 +303,17 @@ class Panda
      */
     public function decodeLogData($hFile,$start,$end){
         $items = [];
-        $offset = $start;
         $byteCount = $end-$start+1;
-        $rawData = BinaryReader::getRawBytesFromFile($hFile,$offset,$byteCount);
+        $rawData = BinaryReader::getRawBytesFromFile($hFile,$start,$byteCount);
         $stream= new BinaryStream($rawData);
         $stream->setEndian(Endian::BIG_ENDIAN);
         while($byteCount){
             $len = $stream->readUint32();
             $type = $stream->readUByte();
             $data_len = $stream->readUInt16();
-            $data = $this->decodeRecord($type,$data_len,$stream);
+            $data = $this->decodeRecord($type,$data_len-Record::META_DATA_BYTES,$stream);
             $debug_len = $stream->readUInt16();
-            $debug = $this->decodeDebug($debug_len,$stream);
+            $debug = $this->decodeDebug($debug_len-Record::META_DEBUG_BYTES,$stream);
             $items[] = ['log'=>$data,'type'=>$type,'debug'=>$debug];
             $byteCount -= $len;
         }
@@ -429,12 +422,12 @@ class Panda
     protected function getMetaFile()
     {
         $now = Date('Ymd', time());
-        return realpath($this->getDefaultSaveDir()) . DIRECTORY_SEPARATOR .'panda_log_'. 'meta_' . $now . '.idx';
+        return realpath($this->getDefaultSaveDir()) . DIRECTORY_SEPARATOR .'panda_meta_' . $now . '.idx';
     }
 
     protected function getLogFile(){
         $now = Date('Ymd', time());
-        return realpath($this->getDefaultSaveDir()) . DIRECTORY_SEPARATOR .'panda_log_'. $now . '.pda';
+        return realpath($this->getDefaultSaveDir()) . DIRECTORY_SEPARATOR .'panda_data_'. $now . '.pda';
     }
 
     protected function getDefaultSaveDir(){

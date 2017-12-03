@@ -248,6 +248,10 @@ class BinaryStream
         return $arr['k'];
     }
 
+    /*
+     * @func 读取指定字节字符串
+     * @author code lighter
+     */
     public function readStringClean($len){
         if($len <=0){
             return false;
