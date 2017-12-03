@@ -25,8 +25,10 @@ class PandaTester
 //          self::testWriteBinary2();
 //          usleep(1000);
 //      }
-//      return '写入成功';
-       return self::testReadBinary();
+//
+
+      return self::testWriteBinary2();
+      // return self::testReadBinary();
   }
 
   public static function testReadBinary(){
@@ -44,14 +46,15 @@ class PandaTester
       $panda = Panda::instance();
       $panda->log($json);
       $panda->log($o);
+      $debug = $panda->getDebugInfo();
       $panda->flush();
+      return $debug;
 //      echo '写入文件起始地址:0x'.dechex($panda->getFlushBegin()).'H'.PHP_EOL;
 //      echo '写入文件结束地址:0x'.dechex($panda->getFlushEnd()).'H'.PHP_EOL;
 //      echo '写入文件字节数量:'.dechex($panda->getFlushBytes()).PHP_EOL;
   }
 
   public static function testWriteBinary(){
-      for($i=0; $i<1; $i++) {
           $array = ['天下是我的', '你是傻瓜吗？'];
           $o = new \stdClass();
           $o->name = "宋华彪";
@@ -60,14 +63,15 @@ class PandaTester
           $str = 'This is not a good Thing';
           $sql = UserCompany::find()->where(['user_id' => 10, 'company_id' => 1]);
           $panda = Panda::instance();
-          $panda->log($array);
-          $panda->log($o);
-          $panda->log($str);
-          $panda->log($sql);;
+          $panda->log(  $array/*xxxx*/);
+          $panda->log( /***/ $o /**/);
+          $panda->log(/**/$str);
+          $panda->log(/*x#*/$sql);
+          $debug = $panda->getDebugInfo();
           $panda->flush();
+          return $debug;
 //          echo '写入文件起始地址:0x'.dechex($panda->getFlushBegin()).'H'.PHP_EOL;
 //          echo '写入文件结束地址:0x'.dechex($panda->getFlushEnd()).'H'.PHP_EOL;
 //          echo '写入文件字节数量:'.dechex($panda->getFlushBytes()).PHP_EOL;
-      }
   }
 }

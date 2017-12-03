@@ -30,6 +30,7 @@ class Panda
 {
     protected static $_instance = null;
     protected static $data = null;
+    protected static $debug_trace = null;
     protected static $last_flush_begin = 0; //上次写入文件的开始位置
     protected static $last_flush_end   = 0; //上次写入文件的结束位置
     protected static $last_flush_bytes = 0; //上次写入文件的字节数量
@@ -41,6 +42,7 @@ class Panda
     private function __construct()
     {
         self::$data = [];
+        self::$debug_trace = [];
     }
     public static function instance()
     {
@@ -59,8 +61,48 @@ class Panda
         return self::$last_flush_end;
     }
 
+    public function trace($trace1,$trace2,$para){
+        $o = new \stdClass();
+        $o->class = $trace2['class'];
+        $o->function = $trace2['function'];
+        $o->line_no = $trace1['line'];
+        $o->args = $para;
+        return $o;
+    }
+
+    public function reflectFunctionParameter($class,$line){
+        if ($class) {
+            $file = realpath(dirname(dirname(__DIR__))).'\\'.$class.'.php';
+            if (file_exists($file)) {
+                $fp = fopen($file, 'rb');
+                if (!$fp)
+                    return '$file_dummy';
+                for ($i=1; $i<$line; ++$i) {
+                    fgets($fp);
+                }
+                $function = fgets($fp);
+                preg_match('/\(\s*(\/\*.*\*\/)*\s*(\$\w+)+\s*(\/\*.*\*\/)*\)/',$function,$matches);
+                fclose($fp);
+                if(isset($matches[2])) {
+                    return $matches[2];
+                }else{
+                    return '$matches';
+                }
+            }
+            return '$dummy';
+        }
+        return '$file_non_exist';
+    }
+
+    public function getDebugInfo(){
+        return self::$debug_trace;
+    }
+
     public function log($content = '')
     {
+        $debug = debug_backtrace();
+        $para_name=self::reflectFunctionParameter($debug[1]['class'],$debug[0]['line']);
+        self::$debug_trace[] = $this->trace($debug[0],$debug[1],$para_name);
         if(is_array($content)){
             $o = new RecordArray();
             $o->log($content);
@@ -101,6 +143,7 @@ class Panda
         }
         self::$data = []; //存盘的时候，必须释放掉变量内存,因为这个是单例
         //否则循环测试写入的时候，会出问题。
+        self::$debug_trace = [];
     }
 
     /*
