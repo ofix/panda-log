@@ -359,13 +359,13 @@ class BinaryStream
         $this->position += $len;
     }
     /*
-     * 补充版
+     * @func 写入二进制流补充版
+     * @author code lighter
      */
-    public function writeStringClean($value)
+    public function writeStringClean($data,$byte_count)
     {
-        $len = strlen($value);
-        $this->data .=pack('a'.$len,$value);
-        $this->position += $len;
+        $this->data .=pack('a'.$byte_count,$data);
+        $this->position += $byte_count;
     }
 
     public function toBytes()

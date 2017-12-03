@@ -28,16 +28,12 @@ use yii\db\Query;
 
 class Panda
 {
-    protected static $_instance = null;
+    protected static $instance = null;
     protected static $data = null;
     protected static $debug_trace = null;
     protected static $last_flush_begin = 0; //上次写入文件的开始位置
     protected static $last_flush_end   = 0; //上次写入文件的结束位置
     protected static $last_flush_bytes = 0; //上次写入文件的字节数量
-    private $prefix  = 'panda_log_'; //log日志前缀
-    private $default_save_dir = __DIR__ . '/../../company/runtime/panda_log/';
-    private $is_rpc;         // 是否是RPC远程调用
-    const FLAG_HTTP_REQUEST = 5; // 格式化每次请求的数据
 
     private function __construct()
     {
@@ -46,10 +42,10 @@ class Panda
     }
     public static function instance()
     {
-        if (is_null(self::$_instance) || !isset(self::$_instance)) {
-            self::$_instance = new self();
+        if (is_null(self::$instance) || !isset(self::$instance)) {
+            self::$instance = new self();
         }
-        return self::$_instance;
+        return self::$instance;
     }
     public function getFlushBytes(){
         return self::$last_flush_bytes;
@@ -79,7 +75,7 @@ class Panda
      * @para $class 调用Panda::instance()->log()函数所在类
      * @para $line 调用Panda::instance()->log()所在代码行号
      */
-    public function reflectFunctionParameter($class,$line){
+    private function reflectFunctionParameter($class,$line){
         if ($class) {
             $file = realpath(dirname(dirname(__DIR__))).'\\'.$class.'.php';
             if (file_exists($file)) {
@@ -136,17 +132,18 @@ class Panda
      */
     public function flush()
     {
-        $this->saveMetaFile(); //保存元数据
+        $this->saveMeta(); //保存元数据
         $logFile = $this->getLogFile();
         if (count(self::$data)) {
             //写入二进制流
             $hFile = BinaryWriter::open($logFile);
-            $o = new BinaryStream();
-            $o->setEndian(Endian::BIG_ENDIAN);
-            foreach (self::$data as $v) {
-                $v->write($o);
+            $stream = new BinaryStream();
+            $stream->setEndian(Endian::BIG_ENDIAN);
+            foreach (self::$data as $k => $v) {
+                $v->write($stream);
+                $this->writeDebugInfo($stream,$k);
             }
-            $bytes = $o->toBytes();
+            $bytes = $stream->toBytes();
             BinaryWriter::append($hFile,$bytes);
             BinaryWriter::close($hFile);
         }
@@ -156,12 +153,21 @@ class Panda
     }
 
     /*
+     * @func 写入Debug信息
+     */
+    private function writeDebugInfo(BinaryStream $stream,$k){
+        $debug_total_bytes = self::getDebugItemLength($k);
+        $stream->writeUInt16($debug_total_bytes);
+        $stream->writeStringClean(json_encode(self::$debug_trace[$k]),$debug_total_bytes-Record::META_DEBUG_BYTES);
+    }
+
+    /*
      * 保存元数据
      * 魔幻数|主版本号|小版本号|总请求数|请求1,请求2,请求3,....
      */
-    protected function saveMetaFile()
+    protected function saveMeta()
     {
-        self::ensureDir($this->default_save_dir);
+        self::ensureDir($this->getDefaultSaveDir());
         $metaFile = self::getMetaFile();
         $lastItemCount = 0;
         if (file_exists($metaFile)) {
@@ -192,6 +198,12 @@ class Panda
         }
     }
     /*
+     * @func 保存debug信息
+     */
+    protected function saveDebug(){
+
+    }
+    /*
      * @func 获取保存的日志文件大小
      */
     protected function getLastLogFilePos($hFile){
@@ -207,12 +219,18 @@ class Panda
     protected function getItemLength(){
         $bytes = 0;
         if (count(self::$data)) {
-            foreach (self::$data as $v) {
-                $bytes += $v->getLength();
+            foreach (self::$data as $k=>$v) {
+                $length = $v->getLength()+self::getDebugItemLength($k);
+                $bytes += $length;
             }
             return $bytes;
         }
         return 0;
+    }
+
+    protected function getDebugItemLength($i){
+        $data = json_encode(self::$debug_trace[$i]);
+        return strlen($data)+Record::META_DEBUG_BYTES;
     }
 
     /*
@@ -298,7 +316,7 @@ class Panda
         while($byteCount){
             $len = $stream->readUint32();
             $type = $stream->readUByte();
-            $items[] =['type'=>$type,'record'=>$this->decodeRecord($type,$len-Record::META_BYTES,$stream)];
+            $items[] =['type'=>$type,'record'=>$this->decodeRecord($type,$len-Record::META_DATA_BYTES,$stream)];
             $byteCount -= $len;
         }
         return $items;
@@ -401,12 +419,16 @@ class Panda
     }
     protected function getMetaFile()
     {
-        $now = Date('Y_m_d', time());
-        return realpath($this->default_save_dir) . DIRECTORY_SEPARATOR . $this->prefix . 'meta_' . $now . '.idx';
+        $now = Date('Ymd', time());
+        return realpath($this->getDefaultSaveDir()) . DIRECTORY_SEPARATOR .'panda_log_'. 'meta_' . $now . '.idx';
     }
 
     protected function getLogFile(){
-        $now = Date('Y_m_d', time());
-        return realpath($this->default_save_dir) . DIRECTORY_SEPARATOR . $this->prefix. $now . '.pda';
+        $now = Date('Ymd', time());
+        return realpath($this->getDefaultSaveDir()) . DIRECTORY_SEPARATOR .'panda_log_'. $now . '.pda';
+    }
+
+    protected function getDefaultSaveDir(){
+        return __DIR__ . '/../../company/runtime/panda_log/';
     }
 }

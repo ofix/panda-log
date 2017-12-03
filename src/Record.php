@@ -30,7 +30,9 @@ abstract class Record
     const RECORD_TYPE_LOGIN  = 7;
     const EMPTY_PLACE_HOLDER = 'nul'; // 空字符串占位符
     const EOL = '\n';                 // 分割符
-    const META_BYTES = 5;             // 每项数据占用的字节数
+    const META_DATA_BYTES  = 2;       // 每项数据占用的字节数
+    const META_DEBUG_BYTES = 2;
+    const META_ITEM_BYTES  = 5;       // 所有字节
     public $type;
     public $data;
     public function __construct()
@@ -49,12 +51,13 @@ abstract class Record
         return $this->data;
     }
     public function getLength(){
-        return strlen($this->data)+self::META_BYTES;
+        return strlen($this->data)+self::META_DATA_BYTES;
     }
     public function write(BinaryStream $stream){
         $len = strlen($this->data);
-        $stream->writeUInt32($len+self::META_BYTES); // 4个字节长度
+        $stream->writeUInt32($len+self::META_DATA_BYTES+self::META_DEBUG_BYTES+self::META_ITEM_BYTES); // 4个字节长度
         $stream->writeUByte($this->type);
-        $stream->writeStringClean($this->data); //剩下的都是数据字节
+        $stream->writeUInt16($len);
+        $stream->writeStringClean($this->data,$len); //剩下的都是数据字节
     }
 }
