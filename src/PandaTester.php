@@ -25,8 +25,7 @@ class PandaTester
 //          self::testWriteBinary2();
 //          usleep(100000);
 //      }
-       self::testReadBinary();
-        die();
+       return self::testReadBinary();
   }
 
   public static function testReadBinary(){
@@ -34,9 +33,7 @@ class PandaTester
       $page_offset = rand(0,1000);
       $page_size = rand(2,50);
       $data = $panda->decode($page_offset,$page_size,true);
-      echo "page_offset = ".$page_offset.PHP_EOL;
-      echo "page_size = ".$page_size.PHP_EOL;
-      echo json_encode($data,JSON_UNESCAPED_UNICODE);
+      return json_encode($data,JSON_UNESCAPED_UNICODE);
   }
 
   public static function testWriteBinary2(){

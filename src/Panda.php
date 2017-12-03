@@ -199,6 +199,9 @@ class Panda
         }
         // 解析meta二进制文件
         $metaFile = $this->getMetaFile();
+        if(!file_exists($metaFile)){
+            return [];
+        }
         $hFile = BinaryReader::open($metaFile);
         //获取总数目
         $totalItems = $this->getMetaItemCount($hFile);
