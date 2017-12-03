@@ -61,15 +61,24 @@ class Panda
         return self::$last_flush_end;
     }
 
+    /*
+     * @func 调用信息记录
+     */
     public function trace($trace1,$trace2,$para){
         $o = new \stdClass();
         $o->class = $trace2['class'];
         $o->function = $trace2['function'];
+        $o->type = $trace2['type'];
         $o->line_no = $trace1['line'];
         $o->args = $para;
         return $o;
     }
 
+    /*
+     * @func 提取传入Panda::instance()->log()的参数名称
+     * @para $class 调用Panda::instance()->log()函数所在类
+     * @para $line 调用Panda::instance()->log()所在代码行号
+     */
     public function reflectFunctionParameter($class,$line){
         if ($class) {
             $file = realpath(dirname(dirname(__DIR__))).'\\'.$class.'.php';
@@ -182,7 +191,9 @@ class Panda
             self::$last_flush_bytes = $szItem+1;
         }
     }
-
+    /*
+     * @func 获取保存的日志文件大小
+     */
     protected function getLastLogFilePos($hFile){
         $bytes = BinaryReader::getRawBytesFromFile($hFile,-4,4);
         $o = new BinaryStream($bytes);
@@ -204,13 +215,18 @@ class Panda
         return 0;
     }
 
+    /*
+     * @func 保存panda log 头部meta信息
+     */
     protected function saveHeader($hFile){
         BinaryWriter::flush($hFile,new PandaHeader(),0);
     }
     public function getHeader($hFile){
         return BinaryReader::getPacketFromFile($hFile,0,new PandaHeader());
     }
-
+    /*
+     * @func 获取所有记录的请求总数
+     */
     public function getMetaItemCount($hFile){
         $header = $this->getHeader($hFile);
         return $header->item_count;
@@ -226,7 +242,7 @@ class Panda
         BinaryWriter::flushRawBytes($hFile,$bytes,6);
     }
     /*
-     *@func 保存请求的meta数据
+     * @func 保存请求的meta数据
      */
     protected function saveMetaOneItem($hFile,$offset_start,$offset_end){
         $o = new BinaryStream();
@@ -236,6 +252,9 @@ class Panda
         $bytes = $o->toBytes();
         BinaryWriter::append($hFile,$bytes);
     }
+    /*
+     * @func 读取保存的日志信息
+     */
     public function decode($page_offset,$page_size=20,$asc=true){
         if($page_size <1){
             return [];
@@ -266,7 +285,9 @@ class Panda
         BinaryReader::close($hFile);
         return ['total'=>$totalItems,'data'=>$items];
     }
-
+    /*
+     * @func 解析多个请求日志数据
+     */
     public function decodeLogData($hFile,$start,$end){
         $items = [];
         $offset = $start;
@@ -282,7 +303,9 @@ class Panda
         }
         return $items;
     }
-
+    /*
+     * @func 解析一个请求日志数据
+     */
     public function decodeRecord($type,$byte_count,$stream){
         $data = null;
         $o = null;
@@ -325,7 +348,9 @@ class Panda
         }
         return null;
     }
-
+    /*
+     * @func 解析meta数据
+     */
     public static function decodeMetaItem($rawBytes,$count){
         $meta= [];
         $o = new BinaryStream($rawBytes);
@@ -361,6 +386,9 @@ class Panda
         }
         return $o;
     }
+    /*
+     * @func 递归创建目录，如果目标目录不存在的话
+     */
     public static function ensureDir($dir, $mode = 0777)
     {
         if (is_dir($dir) || @mkdir($dir, $mode)) {
