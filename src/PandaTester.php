@@ -25,22 +25,72 @@ class PandaTester
 //          self::testWriteBinary2();
 //          usleep(1000);
 //      }
-      return self::testReadBinary();
+//      self::testWriteBinary2();
+      // return self::testReadBinary();
+
+//      print_r(Lexer::splitUtf8Str('阿士大、x\00/*asdf//夫撒地方'));
+//      print_r(Lexer::splitUtf8Str(''));
+//      print_r(Lexer::splitUtf8Str('‘’341324ca凸(艹皿艹 )1324'));
+      self::testLexer();
+      die();
+
+
+//      $now['time'] = 1512403200;
+//      $time1 =self::ti($now);
+//      $time2 = self::ti($now);
+//      echo "time1 = ".$time1.'time2 ='.$time2;
+//      die();
+
+  }
+
+  public static function testLexer(){
+//      $str1 = '/****/$class->object->things  ,/*xxx*/$user';
+//      $str2 = '$long_variable_test["keys"] /*userafdf*/, tmp';
+//      $str3 = '$one, $two,$thr';
+//      $str4 = '12343  ,"44544",["computer_tings"=>"words"]';
+      //字符串中的注释 测试不通过
+      $str5 = '\'/***/this_is_string\'';
+//      $str6 = 'a';
+//      $str7 = 'Class::StaticMethod()';
+//      $str8 = 'Class::StaticMethod($var1)';
+      //方法中的逗号 测试不通过
+      $str9 = 'Class::StaticMethod($var1,$var2)';
+      //new 后面的空格不应该过滤
+      $str10 = '(new Class())->aMethod()';
+      $str11 = '$class->callMethod()';
+//      print_r((new Lexer($str1))->parseArgumentList());
+//      print_r((new Lexer($str2))->parseArgumentList());
+//      print_r((new Lexer($str3))->parseArgumentList());
+//      print_r((new Lexer($str4))->parseArgumentList());
+//      print_r((new Lexer($str5))->parseArgumentList());
+//      print_r((new Lexer($str6))->parseArgumentList());
+//      print_r((new Lexer($str7))->parseArgumentList());
+//      print_r((new Lexer($str8))->parseArgumentList());
+      print_r((new Lexer($str9))->parseArgumentList());
+      print_r((new Lexer($str10))->parseArgumentList());
+      print_r((new Lexer($str11))->parseArgumentList());
+  }
+  public static function ti(&$now){
+      $time1 = date('Y-m-d',$now['time']);
+      return $time1;
   }
 
   public static function testReadBinary(){
       $panda = Panda::instance();
-      $data = $panda->decode(0,14,true);
+      $data = $panda->decode(0,10);
       return $data;
   }
 
   public static function testWriteBinary2(){
-      $o = '123456';
-      $json = array ( 0 => array ('id' => '13', 'name' => '乒乓球'),
-                      1 => array ('id' => '17', 'name' => '篮球'));
+//      $o = '123456';
+//      $json = array ( 0 => array ('id' => '13', 'name' => '乒乓球'),
+//                      1 => array ('id' => '17', 'name' => '篮球'));
+//      $panda = Panda::instance();
+//      $panda->log($json);
+//      $panda->log($o);
       $panda = Panda::instance();
-      $panda->log($json);
-      $panda->log($o);
+      $integer = 12343;
+      $panda->log($integer);
       $panda->flush();
 //      echo '写入文件起始地址:0x'.dechex($panda->getFlushBegin()).'H'.PHP_EOL;
 //      echo '写入文件结束地址:0x'.dechex($panda->getFlushEnd()).'H'.PHP_EOL;

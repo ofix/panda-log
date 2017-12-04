@@ -125,6 +125,10 @@ class Panda
             $o = new RecordString();
             $o->log($content);
             self::$data[] = $o;
+        }else if(is_numeric($content)){
+            $o = new RecordNumber();
+            $o->log($content);
+            self::$data[] = $o;
         }
     }
 
@@ -268,7 +272,7 @@ class Panda
     /*
      * @func 读取保存的日志信息
      */
-    public function decode($page_offset,$page_size=20,$asc=true){
+    public function decode($page_offset,$page_size=20,$asc=false){
         if($page_size <1){
             return [];
         }
@@ -360,6 +364,11 @@ class Panda
                 $o->read($stream,$byte_count);
                 break;
             }
+            case Record::RECORD_TYPE_NUMBER:{
+                $o = new RecordNumber();
+                $o->read($stream,$byte_count);
+                break;
+            }
             default:
                 break;
         }
@@ -389,12 +398,15 @@ class Panda
      * @para $page_size 每页显示的大小
      * @para $asc true:按写入时间顺序读取,false:按写入时间倒序读取
      */
-    public function calcItemPos($total,$page_offset,$page_size,$asc=true){
+    public function calcItemPos($total,$page_offset,$page_size,$asc=false){
         if($page_offset>=$total){
             return null;
         }
         if(($page_offset+$page_size)>=$total){
             $page_size = $total-$page_offset;
+        }
+        if(!$asc){ // 倒序查询
+            $page_offset = ($total - $page_size);
         }
         $o= new \stdClass();
         if($asc) {
