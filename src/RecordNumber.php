@@ -26,9 +26,11 @@ class RecordNumber extends Record
     public function log($number){
         $this->data = json_encode(['number'=>$number]);
     }
+    public function getData(){
+        return ($this->data)->number;
+    }
     public function read(BinaryStream $stream,$byte_count){
         $data = $stream->readStringClean($byte_count);
-        $number = json_decode($data);
-        $this->data = $number['number'];
+        $this->data = json_decode($data);
     }
 }

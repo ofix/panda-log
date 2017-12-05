@@ -78,21 +78,30 @@ class PandaTester
 
   public static function testReadBinary(){
       $panda = Panda::instance();
-      $data = $panda->decode(0,22);
+      $data = $panda->decode(0,10);
       return $data;
   }
 
   public static function testWriteBinary2(){
       $o = '123456';
       $json = array ( 0 => array ('id' => '13', 'name' => '乒乓球'),
-                      1 => array ('id' => '17', 'name' => '篮球'));
+                      1 => array ('id' => '17', 'name' => '篮球'),
+          2 => array ('id' => '17', 'name' => '篮球'),
+          3 => array ('id' => '17', 'name' => '篮球'),
+          4 => array ('id' => '17', 'name' => '篮球'),
+          5 => array ('id' => '17', 'name' => '篮球'),
+          6 => array ('id' => '17', 'name' => '篮球'),
+          7 => array ('id' => '17', 'name' => '篮球'));
+      $integer = 2.4434;
+
       $panda = Panda::instance();
+      $panda->log($integer);
       $panda->log($json);
       $panda->log($o);
-//      $panda = Panda::instance();
-//      $integer = 12343;
-//      $panda->log($integer);
       $panda->flush();
+//      $panda = Panda::instance();
+
+
 //      echo '写入文件起始地址:0x'.dechex($panda->getFlushBegin()).'H'.PHP_EOL;
 //      echo '写入文件结束地址:0x'.dechex($panda->getFlushEnd()).'H'.PHP_EOL;
 //      echo '写入文件字节数量:'.dechex($panda->getFlushBytes()).PHP_EOL;
@@ -104,6 +113,10 @@ class PandaTester
       $distributor_order->name = "宋华彪";
       $distributor_order->job = "advanced PHP programmer";
       $distributor_order->age = 30;
+      $distributor_order->age1 = "adsfadsfadsfasdfasdf";
+      $distributor_order->age2 = "中饭打发大水发的说法发送到发斯蒂芬";
+      $distributor_order->age3 = "asdfadfasdfadsfd";
+      $distributor_order->age4 = 3234324234.20;
           $this_is_a_long_str = 'This is not a good Thing';
           $get_company = UserCompany::find()->where(['user_id' => 10, 'company_id' => 1])
             ->andWhere(['somethin_other'=>1])

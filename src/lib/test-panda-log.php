@@ -55,7 +55,9 @@
                 case 5:// const RECORD_TYPE_OBJECT = 5;
                 case 6:// const RECORD_TYPE_REQUEST= 6;
                 case 7:// const RECORD_TYPE_LOGIN  = 7;
-                    return 'PHP';
+                    return 'php';
+                case 8:
+                    return 'num';
                 default:
                     return 'json';
             }
@@ -70,8 +72,8 @@
             this.code.push(code_piece);
         },
         render:function(){
-            var s='<div class="request"><div class="request-time">'+this.time.substr(0,10)
-                +'<br/><div class="mini-time">'+this.time.substr(11,8)+'</div>'+'</div><div class="request-items">';
+            var s='<div class="request"><div class="request-time">'+this.time.substr(5,14)+'</div>'
+                +'<div class="request-items">';
             for(var i=0,len=this.code.length;i<len;i++){
                 s+=this.code[i];
             }
@@ -88,11 +90,20 @@
         },
         render:function(){
             dbg = this.debug;
-            $s  = '<div class="php-path"><div class="flt php-bug"></div><div class="flt">'+dbg.cls+dbg.type+dbg.func
-                +'</div><div class="flt line"> '+dbg.line+' </div><div class="flt line-no"></div>' +
-                '<div class="flt xpath"></div><div class="clear"></div></div>';
-            $s += '<div class="code-i"><span class="php-var">'+dbg.args +' = </span><code class="'+this.language+'">'+JSON.stringify(this.log)+'</code></div>';
+            $s  = '<div class="php-path"><div class="flt php-bug"></div><div class="flt">'
+                +dbg.cls+dbg.type+dbg.func
+                +'</div><div class="flt line"> '+dbg.line+' </div><div class="flt line-no"></div>'
+                +'<div class="flt xpath"></div></div>';
+            $s += '<div class="code-i"><span class="php-var">'+dbg.args
+                +' =&nbsp;</span>'+this.code()+'</div>';
             return $s;
+        },
+        code:function(){
+            if(this.language === 'num'){
+                return '<span class="php-num">'+JSON.stringify(this.log)+'</span>';
+            }else{
+                return '<code class="'+this.language+'">'+JSON.stringify(this.log)+'</code>';
+            }
         }
     });
 </script>

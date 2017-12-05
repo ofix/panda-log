@@ -1,20 +1,20 @@
 body{padding:0;margin:0;background-color: #272822;}
 .container{
-    width:1080px;
+    width:1180px;
     height:100%;
     margin:0 auto;
     background-color:#FFF;
 }
 
 .request{
-    padding:36px 16px 36px 16px;
+    padding:34px 16px 16px 16px;
     background-color:#272822;
     font-size:17px;
     font-family:Menlo, Monaco, Consolas, "Lucida Console", "Courier New", monospace;
     overflow:hidden;
     box-sizing: border-box;
 }
-.request:after{
+.request:after,.php-path:after{
     content:'';
     clear:both;
     overflow:hidden;
@@ -23,11 +23,13 @@ body{padding:0;margin:0;background-color: #272822;}
 }
 .request-time{
     color:#AAA;
-    font-size:17px;
+    font-size:16px;
     text-align:center;
-    width:240px;
+    width:200px;
     overflow:hidden;
     float:left;
+    padding-top:13px;
+    margin-left:80px;
 }
 .xpath{
     width:16px;
@@ -41,23 +43,32 @@ body{padding:0;margin:0;background-color: #272822;}
 .request-items{
     float:left;
 }
-.mini-time{
-    font-size:16px;
-}
 tt, code, kbd, samp {
     font-family:Menlo, Monaco, Consolas, "Lucida Console", "Courier New", monospace;
 }
 
-.php-var{color:#FC901C;float:left;height:34px;margin-left:6px;line-height:34px;}
+.php-var,.php-num{
+    color:#FC901C;
+    float:left;
+}
+.php-var{color:#FC901C;padding-top:10px;margin-left:8px;}
+.php-num{color:#61CDE1;padding-top:10px;}
 
 .php-func{font-style:italic;}
 .hljs-keyword{font-weight:normal;}
-.sql{line-height:22px;}
+.sql,.php{line-height:24px;}
 
 .php-path{color:#989581;line-height:18px;
     height:28px;
-    margin:0 0 0 0;
     font-style:italic;
+    word-wrap:break-word;
+    padding-top:4px;
+    margin-top:10px;
+    overflow:hidden;
+}
+.code-i{
+    max-width:780px;
+    min-height:32px;
 }
 .php-path .flt{
     float:left;
@@ -66,9 +77,6 @@ tt, code, kbd, samp {
     margin-top:3px;margin-left:7px;
     width:14px;height:14px;
     background-size:100% 100%;
-}
-.code-i{
-    max-width:780px;
 }
 
 .line-no{
@@ -83,6 +91,4 @@ tt, code, kbd, samp {
     margin-top:1px;
     margin-left:40px;
 }
-.clear{
-    clear:both;
-}
+.hljs{overflow-x:visible;}

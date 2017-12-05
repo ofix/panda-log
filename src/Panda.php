@@ -410,13 +410,8 @@ class Panda
             $page_offset = ($total - $page_size);
         }
         $o= new \stdClass();
-        if($asc) {
-            $o->offset = 10+$page_offset*8;
-            $o->size = $page_size*8;
-        }else{
-            $o->offset =(10+8*$total)-($page_offset+$page_size)*8;
-            $o->size = $page_size*8;
-        }
+        $o->offset =10+$page_offset*8;
+        $o->size = $page_size*8;
         return $o;
     }
     /*
