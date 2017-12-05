@@ -18,7 +18,7 @@
 
 <script>
     $(document).ready(function(){
-        $.post('/test/test-panda-log',{},function(response){
+        $.post('/panda/index',{},function(response){
             if(response.data.length===0) return;
             var records = response.data.records;
             for(var i=0,request_count = records.length; i<request_count;i++){
