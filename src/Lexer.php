@@ -53,6 +53,9 @@ class Lexer
         return $this->args;
     }
     public function getToken(){
+        while($this->ch != '('){
+            $this->next();
+        }
         $this->skipCommentAndWhiteSpace();
         while($this->ch != self::EOL&&$this->ch !=','){
             $this->word .=$this->ch;

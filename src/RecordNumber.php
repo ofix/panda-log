@@ -23,21 +23,12 @@ class RecordNumber extends Record
         parent::__construct();
         $this->type = self::RECORD_TYPE_NUMBER;
     }
-    public function log($string){
-        $this->data = $string;
-    }
-    public function getLength(){
-        return 4+self::META_DATA_BYTES;
-    }
-    public function write(BinaryStream $stream,$debug_len){
-        $len =4; // UInt 32位
-        $total_bytes = $debug_len+$len+self::META_DATA_BYTES+self::META_ITEM_BYTES;
-        $stream->writeUInt32($total_bytes); // 4个字节长度
-        $stream->writeUByte($this->type);
-        $stream->writeUInt16($len+self::META_DATA_BYTES);
-        $stream->writeUInt32($this->data); //剩下的都是数据字节
+    public function log($number){
+        $this->data = json_encode(['number'=>$number]);
     }
     public function read(BinaryStream $stream,$byte_count){
-        $this->data = $stream->readInt32();
+        $data = $stream->readStringClean($byte_count);
+        $number = json_decode($data);
+        $this->data = $number['number'];
     }
 }

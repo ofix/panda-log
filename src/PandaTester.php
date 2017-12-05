@@ -25,14 +25,15 @@ class PandaTester
 //          self::testWriteBinary2();
 //          usleep(1000);
 //      }
-//      self::testWriteBinary2();
-      // return self::testReadBinary();
+       self::testWriteBinary();
+       self::testWriteBinary2();
+       return self::testReadBinary();
 
 //      print_r(Lexer::splitUtf8Str('阿士大、x\00/*asdf//夫撒地方'));
 //      print_r(Lexer::splitUtf8Str(''));
 //      print_r(Lexer::splitUtf8Str('‘’341324ca凸(艹皿艹 )1324'));
-      self::testLexer();
-      die();
+//      self::testLexer();
+//      die();
 
 
 //      $now['time'] = 1512403200;
@@ -77,20 +78,20 @@ class PandaTester
 
   public static function testReadBinary(){
       $panda = Panda::instance();
-      $data = $panda->decode(0,10);
+      $data = $panda->decode(0,22);
       return $data;
   }
 
   public static function testWriteBinary2(){
-//      $o = '123456';
-//      $json = array ( 0 => array ('id' => '13', 'name' => '乒乓球'),
-//                      1 => array ('id' => '17', 'name' => '篮球'));
-//      $panda = Panda::instance();
-//      $panda->log($json);
-//      $panda->log($o);
+      $o = '123456';
+      $json = array ( 0 => array ('id' => '13', 'name' => '乒乓球'),
+                      1 => array ('id' => '17', 'name' => '篮球'));
       $panda = Panda::instance();
-      $integer = 12343;
-      $panda->log($integer);
+      $panda->log($json);
+      $panda->log($o);
+//      $panda = Panda::instance();
+//      $integer = 12343;
+//      $panda->log($integer);
       $panda->flush();
 //      echo '写入文件起始地址:0x'.dechex($panda->getFlushBegin()).'H'.PHP_EOL;
 //      echo '写入文件结束地址:0x'.dechex($panda->getFlushEnd()).'H'.PHP_EOL;

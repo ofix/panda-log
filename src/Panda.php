@@ -26,7 +26,7 @@ namespace common\panda;
 use MongoDB\BSON\Binary;
 use yii\base\Model;
 use yii\db\Query;
-
+date_default_timezone_set('PRC');
 class Panda
 {
     protected static $instance = null;
@@ -63,11 +63,12 @@ class Panda
      */
     public function trace($trace1,$trace2,$para){
         $o = new \stdClass();
-        $o->_cls = $trace2['class'];
-        $o->_func = $trace2['function'];
-        $o->_type = $trace2['type'];
-        $o->_line = $trace1['line'];
-        $o->_args = $para;
+        $o->cls  = $trace2['class'];
+        $o->func = $trace2['function'];
+        $o->type = $trace2['type'];
+        $o->line = $trace1['line'];
+        $o->args = $para;
+        $o->time = date('Y-m-d H:i:s',time());
         return $o;
     }
 
