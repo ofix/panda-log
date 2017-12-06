@@ -79,7 +79,8 @@ class Panda
      */
     private function reflectFunctionParameter($class,$line){
         if ($class) {
-            $file = realpath(dirname(dirname(__DIR__))).'\\'.$class.'.php';
+            $path = realpath(dirname(dirname(__DIR__))).'\\'.$class.'.php';
+            $file = str_replace(array('/', '\\'), DIRECTORY_SEPARATOR, $path);
             if (file_exists($file)) {
                 $fp = fopen($file, 'rb');
                 if (!$fp)
