@@ -5,7 +5,6 @@ body{padding:0;margin:0;background-color: #272822;}
     margin:0 auto;
     background-color:#FFF;
 }
-
 .request{
     padding:34px 16px 16px 16px;
     background-color:#272822;
@@ -31,28 +30,19 @@ body{padding:0;margin:0;background-color: #272822;}
     padding-top:13px;
     margin-left:80px;
 }
-.xpath{
-    width:16px;
-    height:16px;
-    background-color:#AAA;
-    margin-left:50px;
-    margin-top:2px;
-    cursor:pointer;
-    display:none;
-}
 .request-items{
     float:left;
 }
 tt, code, kbd, samp {
     font-family:Menlo, Monaco, Consolas, "Lucida Console", "Courier New", monospace;
 }
-
-.php-var,.php-num{
-    color:#FC901C;
+.php-var,.php-num,.php-equal{
     float:left;
+    padding-top:10px;
 }
-.php-var{color:#FC901C;padding-top:10px;margin-left:8px;}
-.php-num{color:#61CDE1;padding-top:10px;}
+.php-equal{color:#EEE;}
+.php-var{color:#FC901C;margin-left:8px;}
+.php-num{color:#61CDE1;}
 
 .php-func{font-style:italic;}
 .hljs-keyword{font-weight:normal;}
@@ -70,6 +60,18 @@ tt, code, kbd, samp {
     max-width:780px;
     min-height:32px;
 }
+.copy{
+    width:18px;
+    height:18px;
+    margin-top:2px;
+    margin-left:36px;
+    cursor:pointer;
+    background-image:url("copy.svg");
+    background-size:100% 100%;
+}
+.copy:hover{
+    background-image: url("copyi.svg");
+}
 .php-path .flt{
     float:left;
 }
@@ -78,7 +80,6 @@ tt, code, kbd, samp {
     width:14px;height:14px;
     background-size:100% 100%;
 }
-
 .line-no{
     display:none;
     background-image:url("line-no.svg");margin-left:10px;
@@ -86,7 +87,6 @@ tt, code, kbd, samp {
     width:18px;height:18px;
     background-size:100% 100%;
 }
-
 .line{
     margin-top:1px;
     margin-left:40px;

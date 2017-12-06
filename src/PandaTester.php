@@ -25,8 +25,6 @@ class PandaTester
 //          self::testWriteBinary2();
 //          usleep(1000);
 //      }
-       self::testWriteBinary();
-       self::testWriteBinary2();
        return self::testReadBinary();
 
 //      print_r(Lexer::splitUtf8Str('阿士大、x\00/*asdf//夫撒地方'));
@@ -83,8 +81,9 @@ class PandaTester
   }
 
   public static function testWriteBinary2(){
-      $o = '123456';
-      $json = array ( 0 => array ('id' => '13', 'name' => '乒乓球'),
+      $integer_val = 123456;
+      $double_value = 823234234.4343;
+      $favorite_things = array ( 0 => array ('id' => '13', 'name' => '乒乓球'),
                       1 => array ('id' => '17', 'name' => '篮球'),
           2 => array ('id' => '17', 'name' => '篮球'),
           3 => array ('id' => '17', 'name' => '篮球'),
@@ -92,12 +91,10 @@ class PandaTester
           5 => array ('id' => '17', 'name' => '篮球'),
           6 => array ('id' => '17', 'name' => '篮球'),
           7 => array ('id' => '17', 'name' => '篮球'));
-      $integer = 2.4434;
-
       $panda = Panda::instance();
-      $panda->log($integer);
-      $panda->log($json);
-      $panda->log($o);
+      $panda->log($integer_val);
+      $panda->log($favorite_things);
+      $panda->log($double_value);
       $panda->flush();
 //      $panda = Panda::instance();
 
@@ -108,25 +105,25 @@ class PandaTester
   }
 
   public static function testWriteBinary(){
-          $array = ['天下是我的', '你是傻瓜吗？'];
+          $array = ['中国武汉', '深圳福田国际金融中心'];
           $distributor_order = new \stdClass();
-      $distributor_order->name = "宋华彪";
-      $distributor_order->job = "advanced PHP programmer";
-      $distributor_order->age = 30;
-      $distributor_order->age1 = "adsfadsfadsfasdfasdf";
-      $distributor_order->age2 = "中饭打发大水发的说法发送到发斯蒂芬";
-      $distributor_order->age3 = "asdfadfasdfadsfd";
-      $distributor_order->age4 = 3234324234.20;
+          $distributor_order->name = "tom";
+          $distributor_order->job = "advanced senior PHP programmer";
+          $distributor_order->age = 20;
+          $distributor_order->sex = "unknown things";
+          $distributor_order->test= "这是一条广播消息，楼下来了快递，火速来取！";
+          $distributor_order->push = "同志快醒醒，你有一个bug还没有修复";
+          $distributor_order->xx_zLush = 3234324234.20;
           $this_is_a_long_str = 'This is not a good Thing';
-          $get_company = UserCompany::find()->where(['user_id' => 10, 'company_id' => 1])
-            ->andWhere(['somethin_other'=>1])
+          $online_company = UserCompany::find()->where(['user_id' => 10, 'company_id' => 1])
+            ->andWhere(['something_other'=>1])
             ->andWhere(['in','query_condition',[1,100,20]])
             ->innerJoin(['user','user.id=user_company.user_id']);
           $panda = Panda::instance();
           $panda->log(  $array/*xxxx*/);
           $panda->log( /***/ $distributor_order /**/);
           $panda->log(/**/$this_is_a_long_str);
-          $panda->log(/*x#*/$get_company);
+          $panda->log(/*x#*/$online_company);
           $panda->flush();
 //          echo '写入文件起始地址:0x'.dechex($panda->getFlushBegin()).'H'.PHP_EOL;
 //          echo '写入文件结束地址:0x'.dechex($panda->getFlushEnd()).'H'.PHP_EOL;

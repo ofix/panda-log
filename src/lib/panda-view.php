@@ -10,6 +10,7 @@
     <script src="/company/panda-log/jquery-3.2.1.min.js"></script>
     <script src="/company/panda-log/jquery.class.js"></script>
     <script src="/company/panda-log/highlight/highlight.pack.js"></script>
+    <script src="/company/panda-log/clipboard.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -17,6 +18,12 @@
 </body>
 
 <script>
+    var clipboard = new Clipboard('.copy');
+    clipboard.on('success', function(e) {
+        console.info('Text:', e.text);
+        e.clearSelection();
+    });
+    var iCode =0;
     $(document).ready(function(){
         $.post('/panda/index',{},function(response){
             if(response.data.length===0) return;
@@ -36,10 +43,6 @@
                 hljs.highlightBlock(block);
             });
         },'json');
-
-        $(document).on('click','.xpath',function(){
-            alert('click');
-        });
     });
     var Language = Class.extend({
         init:function(i){
@@ -87,22 +90,23 @@
             this.language = language;
             this.log = log;
             this.debug = debug;
+            this.iCode = ++iCode;
         },
         render:function(){
             dbg = this.debug;
             $s  = '<div class="php-path"><div class="flt php-bug"></div><div class="flt">'
                 +dbg.cls+dbg.type+dbg.func
                 +'</div><div class="flt line"> '+dbg.line+' </div><div class="flt line-no"></div>'
-                +'<div class="flt xpath"></div></div>';
+                +'<div class="flt copy" data-clipboard-target="#code-i-'+this.iCode+'"></div></div>';
             $s += '<div class="code-i"><span class="php-var">'+dbg.args
-                +' =&nbsp;</span>'+this.code()+'</div>';
+                +'</span><span class="php-equal">&nbsp;=&nbsp;</span>'+this.code()+'</div>';
             return $s;
         },
         code:function(){
             if(this.language === 'num'){
-                return '<span class="php-num">'+JSON.stringify(this.log)+'</span>';
+                return '<span class="php-num" id="code-i-'+this.iCode+'">'+JSON.stringify(this.log)+'</span>';
             }else{
-                return '<code class="'+this.language+'">'+JSON.stringify(this.log)+'</code>';
+                return '<code class="'+this.language+'" id="code-i-'+this.iCode+'">'+JSON.stringify(this.log)+'</code>';
             }
         }
     });
