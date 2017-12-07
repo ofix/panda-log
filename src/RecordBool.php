@@ -22,13 +22,13 @@ class RecordBool extends Record
     public function __construct()
     {
         parent::__construct();
-        $this->type = self::RECORD_TYPE_NUMBER;
+        $this->type = self::RECORD_TYPE_BOOL;
     }
     public function log($bool){
-        $this->data = json_encode(['_bool'=>$bool?1:0]);
+        $this->data = json_encode(['b'=>$bool?1:0]);
     }
     public function getData(){
-        return ($this->data)->_bool;
+        return ($this->data)->b;
     }
     public function read(BinaryStream $stream,$byte_count){
         $data = $stream->readStringClean($byte_count);

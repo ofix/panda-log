@@ -61,6 +61,8 @@
                     return 'php';
                 case 8:
                     return 'num';
+                case 9:
+                    return 'bool';
                 default:
                     return 'json';
             }
@@ -109,6 +111,8 @@
         code:function(){
             if(this.language === 'num'){
                 return '<span class="php-num" id="code-i-'+this.iCode+'">'+JSON.stringify(this.log)+'</span>';
+            }else if(this.language === 'bool'){
+                return '<span class="php-bool" id="code-i-'+this.iCode+'">'+(1===this.log?'true':'false')+'</span>';
             }else{
                 return '<code class="'+this.language+'" id="code-i-'+this.iCode+'">'+JSON.stringify(this.log)+'</code>';
             }

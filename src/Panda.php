@@ -77,7 +77,7 @@ class Panda
      * @para $class 调用Panda::instance()->log()函数所在类
      * @para $line 调用Panda::instance()->log()所在代码行号
      */
-    private function reflectFunctionParameter($class,$line){
+    private function reflectFunctionParameter($class,$line_no){
         if ($class) {
             $path = realpath(dirname(dirname(__DIR__))).'\\'.$class.'.php';
             $file = str_replace(array('/', '\\'), DIRECTORY_SEPARATOR, $path);
@@ -85,11 +85,14 @@ class Panda
                 $fp = fopen($file, 'rb');
                 if (!$fp)
                     return '$file_dummy';
-                for ($i=1; $i<$line; ++$i) {
+                $start = $line_no>20?$line_no-20:0;
+                for ($i=$start; $i<$line_no; ++$i) {
                     fgets($fp);
                 }
                 $function = fgets($fp);
-                preg_match('/\(\s*(\/\*.*\*\/)*\s*(\$\w+)+\s*(\/\*.*\*\/)*\)/',$function,$matches);
+                var_dump( $function);
+                die();
+               // preg_match('/\(\s*(\/\*.*\*\/)*\s*(\$\w+)+\s*(\/\*.*\*\/)*\)/',$function,$matches);
                 fclose($fp);
                 if(isset($matches[2])) {
                     return $matches[2];
@@ -110,7 +113,7 @@ class Panda
     {
         $debug = debug_backtrace();
         $para_name=self::reflectFunctionParameter($debug[1]['class'],$debug[0]['line']);
-        $data = $this->trace($debug[0],$debug[1],$para_name);
+        //$data = $this->trace($debug[0],$debug[1],$para_name);
         self::$debug_trace[] = $this->trace($debug[0],$debug[1],$para_name);
         if(is_array($content)){
             $o = new RecordArray();
@@ -133,9 +136,8 @@ class Panda
             $o->log($content);
             self::$data[] = $o;
         }else if(is_bool($content)){
-            $o = new RecordNumber();
-            $bool = $content?'true':'false';
-            $o->log($bool);
+            $o = new RecordBool();
+            $o->log($content);
             self::$data[] = $o;
         }
     }
@@ -374,6 +376,11 @@ class Panda
             }
             case Record::RECORD_TYPE_NUMBER:{
                 $o = new RecordNumber();
+                $o->read($stream,$byte_count);
+                break;
+            }
+            case Record::RECORD_TYPE_BOOL:{
+                $o = new RecordBool();
                 $o->read($stream,$byte_count);
                 break;
             }

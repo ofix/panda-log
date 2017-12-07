@@ -34,13 +34,14 @@ body{padding:0;margin:0;background-color: #272822;}
 tt, code, kbd, samp {
     font-family:Menlo, Monaco, Consolas, "Lucida Console", "Courier New", monospace;
 }
-.php-var,.php-num,.php-equal{
+.php-var,.php-bool,.php-num,.php-equal{
     float:left;
     padding-top:10px;
 }
 .php-equal{color:#EEE;}
 .php-var{color:#FC901C;margin-left:8px;}
 .php-num{color:#61CDE1;}
+.php-bool{color:#68E868;}
 
 .php-func{font-style:italic;}
 .hljs-keyword{font-weight:normal;}
