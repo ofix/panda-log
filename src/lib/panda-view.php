@@ -94,8 +94,12 @@
         },
         render:function(){
             dbg = this.debug;
+            path = dbg.cls+dbg.type+dbg.func;
+            if(path.length>70){
+                path = '...'+path.substr(path.length-70,70);
+            }
             $s  = '<div class="php-path"><div class="flt php-bug"></div><div class="flt">'
-                +dbg.cls+dbg.type+dbg.func
+                +path
                 +'</div><div class="flt line"> '+dbg.line+' </div><div class="flt line-no"></div>'
                 +'<div class="flt copy" data-clipboard-target="#code-i-'+this.iCode+'"></div></div>';
             $s += '<div class="code-i"><span class="php-var">'+dbg.args

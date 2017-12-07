@@ -6,7 +6,6 @@ body{padding:0;margin:0;background-color: #272822;}
     background-color:#FFF;
 }
 .request{
-    padding:34px 16px 16px 16px;
     background-color:#272822;
     font-size:17px;
     font-family:Menlo, Monaco, Consolas, "Lucida Console", "Courier New", monospace;
@@ -23,12 +22,11 @@ body{padding:0;margin:0;background-color: #272822;}
 .request-time{
     color:#AAA;
     font-size:16px;
-    text-align:center;
+    text-align:left;
     width:200px;
     overflow:hidden;
     float:left;
     padding-top:13px;
-    margin-left:80px;
 }
 .request-items{
     float:left;

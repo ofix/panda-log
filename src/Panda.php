@@ -110,6 +110,7 @@ class Panda
     {
         $debug = debug_backtrace();
         $para_name=self::reflectFunctionParameter($debug[1]['class'],$debug[0]['line']);
+        $data = $this->trace($debug[0],$debug[1],$para_name);
         self::$debug_trace[] = $this->trace($debug[0],$debug[1],$para_name);
         if(is_array($content)){
             $o = new RecordArray();
@@ -130,6 +131,11 @@ class Panda
         }else if(is_numeric($content)){
             $o = new RecordNumber();
             $o->log($content);
+            self::$data[] = $o;
+        }else if(is_bool($content)){
+            $o = new RecordNumber();
+            $bool = $content?'true':'false';
+            $o->log($bool);
             self::$data[] = $o;
         }
     }
