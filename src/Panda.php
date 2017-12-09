@@ -85,14 +85,11 @@ class Panda
                 $fp = fopen($file, 'rb');
                 if (!$fp)
                     return '$file_dummy';
-                $start = $line_no>20?$line_no-20:0;
-                for ($i=$start; $i<$line_no; ++$i) {
+                for ($i=1; $i<$line_no; ++$i) {
                     fgets($fp);
                 }
                 $function = fgets($fp);
-                var_dump( $function);
-                die();
-               // preg_match('/\(\s*(\/\*.*\*\/)*\s*(\$\w+)+\s*(\/\*.*\*\/)*\)/',$function,$matches);
+                preg_match('/\(\s*(\/\*.*\*\/)*\s*(\$\w+)+\s*(\/\*.*\*\/)*\)/',$function,$matches);
                 fclose($fp);
                 if(isset($matches[2])) {
                     return $matches[2];

@@ -44,7 +44,7 @@ class PandaTester
 //          self::testWriteBinary2();
 //          usleep(1000);
 //      }
-       self::what_can_i_do();
+       //self::what_can_i_do();
        return self::testReadBinary();
 
 //      print_r(Lexer::splitUtf8Str('阿士大、x\00/*asdf//夫撒地方'));
