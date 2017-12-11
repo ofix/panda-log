@@ -1,6 +1,6 @@
 body{padding:0;margin:0;background-color: #272822;}
 .container{
-    width:1180px;
+    width:940px;
     height:100%;
     margin:0 auto;
     background-color:#FFF;
@@ -9,7 +9,6 @@ body{padding:0;margin:0;background-color: #272822;}
     background-color:#272822;
     font-size:17px;
     font-family:Menlo, Monaco, Consolas, "Lucida Console", "Courier New", monospace;
-    overflow:hidden;
     box-sizing: border-box;
 }
 .request:after,.php-path:after{
@@ -23,13 +22,14 @@ body{padding:0;margin:0;background-color: #272822;}
     color:#AAA;
     font-size:16px;
     text-align:left;
-    width:200px;
+    width:180px;
     overflow:hidden;
     float:left;
     padding-top:13px;
 }
 .request-items{
     float:left;
+    width:720px;
 }
 tt, code, kbd, samp {
     font-family:Menlo, Monaco, Consolas, "Lucida Console", "Courier New", monospace;
@@ -52,12 +52,10 @@ tt, code, kbd, samp {
     height:28px;
     font-style:italic;
     word-wrap:break-word;
-    padding-top:4px;
-    margin-top:10px;
-    overflow:hidden;
+    margin-top:14px;
 }
 .code-i{
-    max-width:780px;
+    max-width:820px;
     min-height:32px;
 }
 .copy{
@@ -91,4 +89,4 @@ tt, code, kbd, samp {
     margin-top:1px;
     margin-left:40px;
 }
-.hljs{overflow-x:visible;}
+.hljs{word-break:break-all;overflow-x:visible;}

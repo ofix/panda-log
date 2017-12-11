@@ -41,7 +41,7 @@ class PandaTester
 //          self::testWriteBinary2();
 //          usleep(1000);
 //      }
-       //self::what_can_i_do();
+       self::what_can_i_do();
        return self::testReadBinary();
 
 //      print_r(Lexer::splitUtf8Str('阿士大、x\00/*asdf//夫撒地方'));
@@ -100,8 +100,9 @@ class PandaTester
   public static function what_can_i_do(){
       $o = new \stdClass();
       $o->is_array = ['a'=>'things','b'=>'no-problem'];
-      Panda::instance()->log($o->
-      is_array);
+      Panda::instance()->log2('$null',null);
+      Panda::instance()->log2('$true',true);
+      Panda::instance()->log2('$false',false);
       Panda::instance()->flush();
   }
 

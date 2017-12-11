@@ -29,7 +29,8 @@ class RecordSql extends Record
     }
     public function log($sql){
         if($sql instanceof ActiveRecord){
-            $this->data = json_encode($sql);
+            $this->type = self::RECORD_TYPE_OBJECT;
+            $this->data = json_encode($sql->attributes);
         }else if($sql instanceof Query){
             $this->data = $sql->createCommand()->getRawSql();
         }
