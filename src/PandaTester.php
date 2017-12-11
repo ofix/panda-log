@@ -15,28 +15,25 @@
  *
  */
 namespace common\panda;
+use common\models\Dporder;
 use common\models\UserCompany;
 
 class PandaTester
 {
     public static function debugTest(){
-        $student = new \stdClass();
-        $student->name = 'tom song';
-        $student->family = ['father'=>'me',
-            'mother'=>1];
-        $student->water = ['things'=>['user_name','user_type'],
-            'other'=>['sb','打几下']];
-        Panda
-            ::
-            instance() -> log
-        ($student
-
-        ->
-        water
-        ['things']
-        );
+//        $student = new \stdClass();
+//        $student->name = 'tom song';
+//        $student->family = ['father'=>'me',
+//            'mother'=>1];
+//        $student->water = ['things'=>['user_name','user_type'],
+//            'other'=>['sb','打几下']];
+//        Panda::instance()->log2('$things',$student->water['things'])
+//            ->log2('$water',$student);
+        $wholesale_order = Dporder::findOne(['id'=>3240]);
+       // $wholesale_order = Dporder::find()->where(['id'=>3240]);
+        Panda::instance()->log($wholesale_order);
         Panda::instance()->flush();
-        Panda::instance()->decode(0,10);
+        return Panda::instance()->decode(0,10);
     }
   public static function testBinaryReader(){
 //      for($i=0; $i<100;$i++) {

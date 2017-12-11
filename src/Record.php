@@ -30,6 +30,7 @@ abstract class Record
     const RECORD_TYPE_LOGIN  = 7;
     const RECORD_TYPE_NUMBER = 8;
     const RECORD_TYPE_BOOL   = 9;
+    const RECORD_TYPE_NULL   = 10;
     const EMPTY_PLACE_HOLDER = 'nul'; // 空字符串占位符
     const EOL = '\n';                 // 分割符
     const META_DATA_BYTES  = 2;       // 每项数据占用的字节数

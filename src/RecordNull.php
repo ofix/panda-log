@@ -10,31 +10,28 @@
  * @copyright https://github.com/ofix
  * @we-chat   981326632
  * @license   http://www.opensource.org/licenses/mit-license.php MIT License
- * @Date      2017/12/2
- * @Time      14:23
+ * @Date      2017/12/4
+ * @Time      13:44
  */
 
 namespace common\panda;
 
-use yii\db\ActiveRecord;
-use yii\db\Query;
-use Yii;
 
-class RecordSql extends Record
+class RecordNull extends Record
 {
     public function __construct()
     {
         parent::__construct();
-        $this->type = self::RECORD_TYPE_SQL;
+        $this->type = self::RECORD_TYPE_NULL;
     }
-    public function log($sql){
-        if($sql instanceof ActiveRecord){
-            $this->data = json_encode($sql);
-        }else if($sql instanceof Query){
-            $this->data = $sql->createCommand()->getRawSql();
-        }
+    public function log($null){
+        $this->data = json_encode(['n'=>$null]);
+    }
+    public function getData(){
+        return ($this->data)->n;
     }
     public function read(BinaryStream $stream,$byte_count){
-        $this->data = $stream->readStringClean($byte_count);
+        $data = $stream->readStringClean($byte_count);
+        $this->data = json_decode($data);
     }
 }

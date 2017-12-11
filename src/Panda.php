@@ -106,35 +106,42 @@ class Panda
         return self::$debug_trace;
     }
 
+    /*
+     *
+     */
+    public function log2($name,$content){
+        $debug = debug_backtrace();
+        self::$debug_trace[] = $this->trace($debug[0],$debug[1],$name);
+        $this->logData($content);
+        return $this;
+    }
     public function log($content = '')
     {
         $debug = debug_backtrace();
-        $para_name=self::reflectFunctionParameter($debug[1]['class'],$debug[0]['line']);
-        //$data = $this->trace($debug[0],$debug[1],$para_name);
+        $para_name=$this->reflectFunctionParameter($debug[1]['class'],$debug[0]['line']);
         self::$debug_trace[] = $this->trace($debug[0],$debug[1],$para_name);
-        if(is_array($content)){
+        $this->logData($content);
+        return $this;
+    }
+    protected function logData($data){
+        $o = null;
+        if(is_array($data)){
             $o = new RecordArray();
-            $o->log($content);
-            self::$data[] = $o;
-        }else if(($content instanceof Query) || ($content instanceof Model)){
+        }else if(($data instanceof Query) || ($data instanceof Model)){
             $o = new RecordSql();
-            $o->log($content);
-            self::$data[] = $o;
-        }else if(is_object($content)){
+        }else if(is_object($data)){
             $o = new RecordObject();
-            $o->log($content);
-            self::$data[] = $o;
-        }else if(is_string($content)){
+        }else if(is_string($data)){
             $o = new RecordString();
-            $o->log($content);
-            self::$data[] = $o;
-        }else if(is_numeric($content)){
+        }else if(is_numeric($data)){
             $o = new RecordNumber();
-            $o->log($content);
-            self::$data[] = $o;
-        }else if(is_bool($content)){
+        }else if(is_bool($data)){
             $o = new RecordBool();
-            $o->log($content);
+        }else if(is_null($data)){
+            $o = new RecordNull();
+        }
+        if(!is_null($o)){
+            $o->log($data);
             self::$data[] = $o;
         }
     }
@@ -343,48 +350,45 @@ class Panda
         switch($type){
             case Record::RECORD_TYPE_STRING:{
                 $o = new RecordString();
-                $o->read($stream,$byte_count);
                 break;
             }
             case Record::RECORD_TYPE_OBJECT:{
                 $o = new RecordObject();
-                $o->read($stream,$byte_count);
                 break;
             }
             case Record::RECORD_TYPE_ARRAY:{
                 $o = new RecordArray();
-                $o->read($stream,$byte_count);
                 break;
             }
             case Record::RECORD_TYPE_SQL:{
                 $o = new RecordSql();
-                $o->read($stream,$byte_count);
                 break;
             }
             case Record::RECORD_TYPE_REQUEST:{
                 $o = new RecordRequest();
-                $o->read($stream,$byte_count);
                 break;
             }
             case Record::RECORD_TYPE_LOGIN:{
                 $o = new RecordLogin();
-                $o->read($stream,$byte_count);
                 break;
             }
             case Record::RECORD_TYPE_NUMBER:{
                 $o = new RecordNumber();
-                $o->read($stream,$byte_count);
                 break;
             }
             case Record::RECORD_TYPE_BOOL:{
                 $o = new RecordBool();
-                $o->read($stream,$byte_count);
+                break;
+            }
+            case Record::RECORD_TYPE_NULL:{
+                $o = new RecordNull();
                 break;
             }
             default:
                 break;
         }
         if($o) {
+            $o->read($stream,$byte_count);
             return $o->getData();
         }
         return null;

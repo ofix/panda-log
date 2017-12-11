@@ -13,8 +13,8 @@
     <script src="/company/panda-log/clipboard.min.js"></script>
 </head>
 <body>
-    <div class="container">
-    </div>
+<div class="container">
+</div>
 </body>
 
 <script>
@@ -25,7 +25,7 @@
     });
     var iCode =0;
     $(document).ready(function(){
-        $.post('/panda/index',{},function(response){
+        $.post('/panda/test',{},function(response){
             if(response.data.length===0) return;
             var records = response.data.records;
             for(var i=0,request_count = records.length; i<request_count;i++){
@@ -33,7 +33,7 @@
                 for(var j=0,log_count = records[i].length; j<log_count;j++){
                     var language = new Language(records[i][j].type);
                     var codePiece = new CodePiece(language.parse(),
-                       records[i][j].log,records[i][j].debug);
+                        records[i][j].log,records[i][j].debug);
                     request.push(codePiece.render());
                 }
                 request.render();
