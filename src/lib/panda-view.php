@@ -6,7 +6,7 @@
     <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
     <title>熊猫日志</title>
     <link href="/company/panda-log/highlight/styles/monokai.css" rel="stylesheet" type="text/css"/>
-    <link href="/company/panda-log/panda-log.css" rel="stylesheet">
+    <link href="/company/panda-log/panda.css" rel="stylesheet">
     <script src="/company/panda-log/jquery-3.2.1.min.js"></script>
     <script src="/company/panda-log/jquery.class.js"></script>
     <script src="/company/panda-log/highlight/highlight.pack.js"></script>
@@ -42,7 +42,18 @@
             $('div code').each(function(i, block) {
                 hljs.highlightBlock(block);
             });
+            var sb = new ScrollBar();
+            sb.toBottom();
         },'json');
+    });
+
+    var ScrollBar = Class.extend({
+        init:function(){
+            this.winH = document.documentElement.scrollHeight || document.body.scrollHeight;
+        },
+        toBottom:function(){
+            window.scrollTo(this.winH,this.winH);
+        }
     });
     var Language = Class.extend({
         init:function(i){
@@ -99,8 +110,8 @@
         render:function(){
             dbg = this.debug;
             path = dbg.cls+dbg.type+dbg.func;
-            if(path.length>70){
-                path = '...'+path.substr(path.length-70,70);
+            if(path.length>60){
+                path = '...'+path.substr(path.length-60,60);
             }
             $s  = '<div class="php-path"><div class="flt php-bug"></div><div class="flt">'
                 +path

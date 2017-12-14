@@ -32,7 +32,7 @@ class RecordSql extends Record
             $this->type = self::RECORD_TYPE_OBJECT;
             $this->data = json_encode($sql->attributes);
         }else if($sql instanceof Query){
-            $this->data = $sql->createCommand()->getRawSql();
+            $this->data = $this->removeLineFeed($sql->createCommand()->getRawSql());
         }
     }
     public function read(BinaryStream $stream,$byte_count){

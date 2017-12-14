@@ -41,7 +41,6 @@ class PandaTester
 //          self::testWriteBinary2();
 //          usleep(1000);
 //      }
-       self::what_can_i_do();
        return self::testReadBinary();
 
 //      print_r(Lexer::splitUtf8Str('阿士大、x\00/*asdf//夫撒地方'));
@@ -93,7 +92,7 @@ class PandaTester
 
   public static function testReadBinary(){
       $panda = Panda::instance();
-      $data = $panda->decode(0,10);
+      $data = $panda->decode(0,40);
       return $data;
   }
 

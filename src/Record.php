@@ -53,6 +53,10 @@ abstract class Record
     public function getData(){
         return $this->data;
     }
+    public function removeLineFeed($str){
+        $order = array("\r\n", "\n", "\r");
+        return str_replace($order, '', $str);
+    }
     public function getLength(){
         return strlen($this->data)+self::META_DATA_BYTES+self::META_ITEM_BYTES;
     }
