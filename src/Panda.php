@@ -301,7 +301,7 @@ class Panda
         //获取真实数据所在偏移meta信息
         $pos = self::calcItemPos($totalItems,$page_offset,$page_size,$asc);
         if(is_null($pos)){
-            return ['total'=>$totalItems,'data'=>[]];
+            return ['total'=>$totalItems,'records'=>[]];
         }
         $rawMeta = BinaryReader::getRawBytesFromFile($hFile,$pos->offset,$pos->size);
         $arrMetaItem = self::decodeMetaItem($rawMeta,$pos->size/8);

@@ -16,8 +16,8 @@
  */
 namespace company\controllers;
 use common\controllers\BaseController;
-use common\panda\PandaTester;
-use common\service\Sendsms;
+use common\panda\PandaReader;
+use common\panda\PandaWriter;
 use Yii;
 
 class PandaController extends BaseController
@@ -30,13 +30,20 @@ class PandaController extends BaseController
             return $this->render('/panda/panda-view');
         }
         $date = Yii::$app->request->post('date');
-        return $this->ajaxSuccess('', '', PandaTester::testBinaryReader($date));
+        $page_offset = Yii::$app->request->post('page_offset',0);
+        $page_size = Yii::$app->request->post('page_size',10);
+        $asc = Yii::$app->request->post('asc',0);
+        $_asc = false;
+        if($asc == 1){
+            $_asc = true;
+        }
+        return $this->ajaxSuccess('', '', PandaReader::query($date,$page_offset,$page_size,$_asc));
     }
     public function actionTest(){
         if (!Yii::$app->request->isPost) {
             $this->layout = false;
             return $this->render('/panda/panda-test');
         }
-        return $this->ajaxSuccess('', '', PandaTester::debugTest());
+        return $this->ajaxSuccess('', '', PandaWriter::debugTest());
     }
 }

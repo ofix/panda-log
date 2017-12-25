@@ -23,39 +23,37 @@
 <script>
     var clipboard = new Clipboard('.copy');
     clipboard.on('success', function(e) {
-        console.info('Text:', e.text);
         e.clearSelection();
     });
-    var iCode =0;
-    function today($withSep) {
-        var date = new Date();
-        var sep = "";
-        if($withSep){
-            sep = "-";
-        }
-        var month = date.getMonth() + 1;
-        var strDate = date.getDate();
-        if (month >= 1 && month <= 9) {
-            month = "0" + month;
-        }
-        if (strDate >= 0 && strDate <= 9) {
-            strDate = "0" + strDate;
-        }
-        return date.getFullYear()+sep  + month+sep  + strDate;
+    var iCode =0,page_offset=0,page_size=10,total=0,loaded=0,select_day =today(false);
+    var initialized = false;
+    $(document).ready(function(){
+        var date = new Schedule({
+            el: '#date', //指定包裹元素（可选）
+            date: today(true), //生成指定日期日历（可选）
+            clickCb: function(y, m, d) {
+                select_day = genDate(y,m,d);
+                $(".container").empty();
+                page_offset=0; page_size=10; total =0;loaded=0;initialized = false;
+                requestLogData(select_day,true,page_offset,page_size,0);
+            }
+        });
+        requestLogData(today(false),true,page_offset,page_size,0);
+    });
+    function loadNewData(){
+        requestLogData(select_day,true,total,page_size,0);
     }
-    function genDate(year,month,day){
-        if (month >= 1 && month <= 9) {
-            month = "0" + month;
-        }
-        if (day >= 0 && day <= 9) {
-            day = "0" + day;
-        }
-        return ""+year +month+day;
+    function loadOldData(){
+        requestLogData(select_day,false,loaded,page_size,1);
     }
-    function requestLogData(date){
-        $.post('/panda/index',{"date":date},function(response){
-            if(response.data.length===0) return;
+    function requestLogData(date,loadNew,pageOffset,pageSize,isAsc){
+        $.post('/panda/index',{"date":date,"page_offset":pageOffset,"page_size":pageSize,"asc":isAsc},function(response){
+            total =response.data.total;
+            if(response.data.records.length===0) return;
+            loaded += response.data.records.length;
+            console.log("loaded = ",loaded);
             var records = response.data.records;
+            var requests = [];
             for(var i=0,request_count = records.length; i<request_count;i++){
                 var request = new Request(records[i][0].debug.time);
                 for(var j=0,log_count = records[i].length; j<log_count;j++){
@@ -64,31 +62,37 @@
                         records[i][j].log,records[i][j].debug);
                     request.push(codePiece.render());
                 }
-                request.render();
+                if(loadNew){
+                    requests.push(request);
+                }else{
+                    requests.unshift(request);
+                }
+            }
+            for(var x=0; x<requests.length;x++){
+                requests[x].render(loadNew);
             }
             hljs.configure({useBR: true});
             $('div code').each(function(i, block) {
                 hljs.highlightBlock(block);
             });
             var sb = new ScrollBar();
-            sb.toBottom();
+            if(loadNew) {
+                sb.toBottom();
+            }else{
+                sb.toTop();
+            }
+            if(!initialized){
+                initialized = true;
+                lazyLoad(loadOldData,loadNewData);
+            }
         },'json');
     }
-    $(document).ready(function(){
-        var date = new Schedule({
-            el: '#date', //指定包裹元素（可选）
-            date: today(true), //生成指定日期日历（可选）
-            clickCb: function(y, m, d) {
-                $(".container").empty();
-                requestLogData(genDate(y,m,d));
-            }
-        });
-        requestLogData(today(false));
-    });
-
     var ScrollBar = Class.extend({
         init:function(){
             this.winH = document.documentElement.scrollHeight || document.body.scrollHeight;
+        },
+        toTop:function(){
+          window.scrollTo(0,0);
         },
         toBottom:function(){
             window.scrollTo(this.winH,this.winH);
@@ -128,14 +132,19 @@
         push:function(code_piece){
             this.code.push(code_piece);
         },
-        render:function(){
+        render:function(loadNew){
             var s='<div class="request"><div class="request-time">'+this.time.substr(5,14)+'</div>'
                 +'<div class="request-items">';
             for(var i=0,len=this.code.length;i<len;i++){
                 s+=this.code[i];
             }
             s+='</div></div>';
-            $('.container').append(s);
+            if(loadNew) {
+                $('.container').append(s);
+            }else{
+                console.log("插入数据到前面.....");
+                $('.container').prepend(s);
+            }
         }
 
     });
@@ -172,5 +181,49 @@
             }
         }
     });
+    function today($withSep) {
+        var date = new Date();
+        var sep = "";
+        if($withSep){
+            sep = "-";
+        }
+        var month = date.getMonth() + 1;
+        var strDate = date.getDate();
+        if (month >= 1 && month <= 9) {
+            month = "0" + month;
+        }
+        if (strDate >= 0 && strDate <= 9) {
+            strDate = "0" + strDate;
+        }
+        return date.getFullYear()+sep  + month+sep  + strDate;
+    }
+    function genDate(year,month,day){
+        if (month >= 1 && month <= 9) {
+            month = "0" + month;
+        }
+        if (day >= 0 && day <= 9) {
+            day = "0" + day;
+        }
+        return ""+year +month+day;
+    }
+    function lazyLoad(loadPrev,loadNext) {
+        $(window).scroll(function(){
+            var scrollTop = $(this).scrollTop();
+            var scrollHeight = $(document).height();
+            var clientHeight = $(this).height();
+//            console.log("scrollTop",scrollTop,"clientHeight",clientHeight,"scrollHeight",scrollHeight);
+            if(scrollTop + clientHeight >= scrollHeight){
+                console.log("***请求之后的数据");
+                if(loadNext){
+                    loadNext();
+                }
+            }else if(scrollTop<=0){
+                console.log('...请求之前的数据');
+                if(loadPrev){
+                    loadPrev();
+                }
+            }
+        });
+    }
 </script>
 </html>
