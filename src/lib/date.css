@@ -7,22 +7,29 @@ ul{
 }
 #date{
 	position:fixed;
-	background: #DDD;
+	background: #272822;
 	left:10px;
-	top:16px;
+	top:0;
 	width: 320px;
 	margin: 0 auto;
-	padding: 35px 20px;
+	padding: 12px 2px 1000px 2px;
 	font-size: 13px;
 }
+
 .schedule-hd{
 	display: flex;
 	justify-content: space-between;
 	padding: 0 15px;
+	color:#989581;
+}
+.week-ul li{
+	color:#FC901C;
 }
 .today{
 	flex: 1;
 	text-align: center;
+	font-size:14px;
+	margin-bottom:20px;
 }
 .ul-box{
 	overflow: hidden;
@@ -31,44 +38,43 @@ ul{
 	float: left;
 	width: 14.28%;
 	text-align: center;
-	padding: 5px 0;
+	padding: 5px 0px;
 }
 .other-month{
 	color: #999999;
 }
-.current-month{
-	color: #333333;
-}
+
 .today-style{
 	border-radius: 50%;
-	background: #58d321;
+	background: #B25A03;
 }
 .arrow{
 	cursor: pointer;
 }
 .dayStyle{
 	display: inline-block;
-	width: 35px;
-	height: 35px;
+	width: 26px;
+	height: 26px;
 	border-radius: 50%;
 	text-align: center;
-	line-height: 35px;
+	line-height: 26px;
 	cursor: pointer;
 }
+.current-month{
+	color: #DDD;
+}
 .current-month > .dayStyle:hover{
-	background: #FC901E;/*#00BDFF;*/
-	color: #ffffff;
+	color: #FC901C;
 }
 .today-flag{
-	background: #00C2B1;
+	background: #D16C08;
 	color: #fff;
 }
 .boxshaw{
 	box-shadow: 2px 2px 15px 2px #e3e3e3;
 }
 .selected-style {
-	background: #FC901E;/*#00BDFF;*/
-	color: #ffffff;
+	color: #FC901C;
 }
 #h3Ele{
 	text-align: center;

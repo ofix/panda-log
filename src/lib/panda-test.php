@@ -7,6 +7,7 @@
     <title>熊猫日志</title>
     <link href="/company/panda-log/highlight/styles/monokai.css" rel="stylesheet" type="text/css"/>
     <link href="/company/panda-log/panda.css" rel="stylesheet">
+    <link href="/company/panda-log/date-font.css" rel="stylesheet">
     <link href="/company/panda-log/date.css" rel="stylesheet">
     <script src="/company/panda-log/date.js"></script>
     <script src="/company/panda-log/jquery-3.2.1.min.js"></script>
@@ -32,9 +33,9 @@
         $(document).on('keyup',function(e){
             e = window.event || e || e.which;
             if(e.keyCode === 38){ //page up
-                (new ScrollBar()).toBottom();
-            }else if(e.keyCode === 40){ //page down
                 (new ScrollBar()).toTop();
+            }else if(e.keyCode === 40){ //page down
+                (new ScrollBar()).toBottom();
             }
         });
         var date = new Schedule({
@@ -43,7 +44,7 @@
             clickCb: function(y, m, d) {
                 select_day = genDate(y,m,d);
                 $(".container").empty();
-                page_offset=0; page_size=10; total =0;loaded=0;initialized = false;
+                page_offset=0; page_size=100; total =0;loaded=0;initialized = false;
                 requestLogData(select_day,true,page_offset,page_size,0);
             }
         });
@@ -91,18 +92,16 @@
             $('div code').each(function(i, block) {
                 hljs.highlightBlock(block);
             });
-            var sb = new ScrollBar();
-            if(!initialized) {
-                sb.toBottom();
-            }
-            if(loadNew){
+            if(loadNew&&initialized){
                 window.scrollTo(0,oldScrollHeight);
-            }else{
+            }else if(!loadNew && initialized){
                 var newScrollHeight = $(document).height();
                 var height = newScrollHeight-oldScrollHeight;
                 if(height>0){
                     window.scrollTo(0,height);
                 }
+            }else if(loadNew&&!initialized){
+                (new ScrollBar()).toBottom();
             }
             if(!initialized){
                 initialized = true;
@@ -235,7 +234,7 @@
             var scrollTop = $(this).scrollTop();
             var scrollHeight = $(document).height();
             var clientHeight = $(this).height();
-            if(scrollTop + clientHeight >= scrollHeight-2){
+            if(scrollTop + clientHeight >= scrollHeight){
                 if(loadNext){
                     loadNext();
                 }

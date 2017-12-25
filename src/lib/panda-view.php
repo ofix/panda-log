@@ -7,6 +7,7 @@
     <title>熊猫日志</title>
     <link href="/company/panda-log/highlight/styles/monokai.css" rel="stylesheet" type="text/css"/>
     <link href="/company/panda-log/panda.css" rel="stylesheet">
+    <link href="/company/panda-log/date-font.css" rel="stylesheet">
     <link href="/company/panda-log/date.css" rel="stylesheet">
     <script src="/company/panda-log/date.js"></script>
     <script src="/company/panda-log/jquery-3.2.1.min.js"></script>
@@ -233,7 +234,7 @@
             var scrollTop = $(this).scrollTop();
             var scrollHeight = $(document).height();
             var clientHeight = $(this).height();
-            if(scrollTop + clientHeight >= scrollHeight-2){
+            if(scrollTop + clientHeight >= scrollHeight){
                 if(loadNext){
                     loadNext();
                 }
