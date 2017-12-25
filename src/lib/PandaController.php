@@ -31,7 +31,7 @@ class PandaController extends BaseController
         }
         $date = Yii::$app->request->post('date');
         $page_offset = Yii::$app->request->post('page_offset',0);
-        $page_size = Yii::$app->request->post('page_size',10);
+        $page_size = Yii::$app->request->post('page_size',100);
         $asc = Yii::$app->request->post('asc',0);
         $_asc = false;
         if($asc == 1){

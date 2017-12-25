@@ -18,6 +18,7 @@
     <div id="date"></div>
     <div class="container">
     </div>
+    <div id="record"></div>
 </body>
 
 <script>
@@ -25,16 +26,24 @@
     clipboard.on('success', function(e) {
         e.clearSelection();
     });
-    var iCode =0,page_offset=0,page_size=10,total=0,loaded=0,select_day =today(false);
+    var iCode =0,page_offset=0,page_size=100,total=0,loaded=0,select_day =today(false);
     var initialized = false;
     $(document).ready(function(){
+        $(document).on('keyup',function(e){
+            e = window.event || e || e.which;
+            if(e.keyCode === 38){ //page up
+                (new ScrollBar()).toTop();
+            }else if(e.keyCode === 40){ //page down
+                (new ScrollBar()).toBottom();
+            }
+        });
         var date = new Schedule({
             el: '#date', //指定包裹元素（可选）
             date: today(true), //生成指定日期日历（可选）
             clickCb: function(y, m, d) {
                 select_day = genDate(y,m,d);
                 $(".container").empty();
-                page_offset=0; page_size=10; total =0;loaded=0;initialized = false;
+                page_offset=0; page_size=100; total =0;loaded=0;initialized = false;
                 requestLogData(select_day,true,page_offset,page_size,0);
             }
         });
@@ -46,12 +55,19 @@
     function loadOldData(){
         requestLogData(select_day,false,loaded,page_size,1);
     }
+    function showRecord(){
+        $('#record').empty().html(loaded + "/" + total).show();
+    }
     function requestLogData(date,loadNew,pageOffset,pageSize,isAsc){
+        var oldScrollHeight = $(document).height();
         $.post('/panda/index',{"date":date,"page_offset":pageOffset,"page_size":pageSize,"asc":isAsc},function(response){
             total =response.data.total;
-            if(response.data.records.length===0) return;
+            if(total === undefined){
+                total = 0;
+                showRecord();
+                return;
+            }
             loaded += response.data.records.length;
-            console.log("loaded = ",loaded);
             var records = response.data.records;
             var requests = [];
             for(var i=0,request_count = records.length; i<request_count;i++){
@@ -75,16 +91,22 @@
             $('div code').each(function(i, block) {
                 hljs.highlightBlock(block);
             });
-            var sb = new ScrollBar();
-            if(loadNew) {
-                sb.toBottom();
-            }else{
-                sb.toTop();
+            if(loadNew&&initialized){
+                window.scrollTo(0,oldScrollHeight);
+            }else if(!loadNew && initialized){
+                var newScrollHeight = $(document).height();
+                var height = newScrollHeight-oldScrollHeight;
+                if(height>0){
+                    window.scrollTo(0,height);
+                }
+            }else if(loadNew&&!initialized){
+                (new ScrollBar()).toBottom();
             }
             if(!initialized){
                 initialized = true;
                 lazyLoad(loadOldData,loadNewData);
             }
+            showRecord();
         },'json');
     }
     var ScrollBar = Class.extend({
@@ -95,7 +117,7 @@
           window.scrollTo(0,0);
         },
         toBottom:function(){
-            window.scrollTo(this.winH,this.winH);
+            window.scrollTo(0,this.winH);
         }
     });
     var Language = Class.extend({
@@ -142,7 +164,6 @@
             if(loadNew) {
                 $('.container').append(s);
             }else{
-                console.log("插入数据到前面.....");
                 $('.container').prepend(s);
             }
         }
@@ -206,19 +227,17 @@
         }
         return ""+year +month+day;
     }
+
     function lazyLoad(loadPrev,loadNext) {
         $(window).scroll(function(){
             var scrollTop = $(this).scrollTop();
             var scrollHeight = $(document).height();
             var clientHeight = $(this).height();
-//            console.log("scrollTop",scrollTop,"clientHeight",clientHeight,"scrollHeight",scrollHeight);
-            if(scrollTop + clientHeight >= scrollHeight){
-                console.log("***请求之后的数据");
+            if(scrollTop + clientHeight >= scrollHeight-2){
                 if(loadNext){
                     loadNext();
                 }
-            }else if(scrollTop<=0){
-                console.log('...请求之前的数据');
+            }else if(scrollTop<=2){
                 if(loadPrev){
                     loadPrev();
                 }

@@ -7,27 +7,69 @@
     <title>熊猫日志</title>
     <link href="/company/panda-log/highlight/styles/monokai.css" rel="stylesheet" type="text/css"/>
     <link href="/company/panda-log/panda.css" rel="stylesheet">
+    <link href="/company/panda-log/date.css" rel="stylesheet">
+    <script src="/company/panda-log/date.js"></script>
     <script src="/company/panda-log/jquery-3.2.1.min.js"></script>
     <script src="/company/panda-log/jquery.class.js"></script>
     <script src="/company/panda-log/highlight/highlight.pack.js"></script>
     <script src="/company/panda-log/clipboard.min.js"></script>
 </head>
 <body>
+<div id="date"></div>
 <div class="container">
 </div>
+<div id="record"></div>
 </body>
 
 <script>
     var clipboard = new Clipboard('.copy');
     clipboard.on('success', function(e) {
-        console.info('Text:', e.text);
         e.clearSelection();
     });
-    var iCode =0;
+    var iCode =0,page_offset=0,page_size=100,total=0,loaded=0,select_day =today(false);
+    var initialized = false;
     $(document).ready(function(){
-        $.post('/panda/test',{},function(response){
-            if(response.data.length===0) return;
+        $(document).on('keyup',function(e){
+            e = window.event || e || e.which;
+            if(e.keyCode === 38){ //page up
+                (new ScrollBar()).toBottom();
+            }else if(e.keyCode === 40){ //page down
+                (new ScrollBar()).toTop();
+            }
+        });
+        var date = new Schedule({
+            el: '#date', //指定包裹元素（可选）
+            date: today(true), //生成指定日期日历（可选）
+            clickCb: function(y, m, d) {
+                select_day = genDate(y,m,d);
+                $(".container").empty();
+                page_offset=0; page_size=10; total =0;loaded=0;initialized = false;
+                requestLogData(select_day,true,page_offset,page_size,0);
+            }
+        });
+        requestLogData(today(false),true,page_offset,page_size,0);
+    });
+    function loadNewData(){
+        requestLogData(select_day,true,total,page_size,0);
+    }
+    function loadOldData(){
+        requestLogData(select_day,false,loaded,page_size,1);
+    }
+    function showRecord(){
+        $('#record').empty().html(loaded + "/" + total).show();
+    }
+    function requestLogData(date,loadNew,pageOffset,pageSize,isAsc){
+        var oldScrollHeight = $(document).height();
+        $.post('/panda/test',{"date":date,"page_offset":pageOffset,"page_size":pageSize,"asc":isAsc},function(response){
+            total =response.data.total;
+            if(total === undefined){
+                total = 0;
+                showRecord();
+                return;
+            }
+            loaded += response.data.records.length;
             var records = response.data.records;
+            var requests = [];
             for(var i=0,request_count = records.length; i<request_count;i++){
                 var request = new Request(records[i][0].debug.time);
                 for(var j=0,log_count = records[i].length; j<log_count;j++){
@@ -36,22 +78,48 @@
                         records[i][j].log,records[i][j].debug);
                     request.push(codePiece.render());
                 }
-                request.render();
+                if(loadNew){
+                    requests.push(request);
+                }else{
+                    requests.unshift(request);
+                }
+            }
+            for(var x=0; x<requests.length;x++){
+                requests[x].render(loadNew);
             }
             hljs.configure({useBR: true});
             $('div code').each(function(i, block) {
                 hljs.highlightBlock(block);
             });
             var sb = new ScrollBar();
-            sb.toBottom();
+            if(!initialized) {
+                sb.toBottom();
+            }
+            if(loadNew){
+                window.scrollTo(0,oldScrollHeight);
+            }else{
+                var newScrollHeight = $(document).height();
+                var height = newScrollHeight-oldScrollHeight;
+                if(height>0){
+                    window.scrollTo(0,height);
+                }
+            }
+            if(!initialized){
+                initialized = true;
+                lazyLoad(loadOldData,loadNewData);
+            }
+            showRecord();
         },'json');
-    });
+    }
     var ScrollBar = Class.extend({
         init:function(){
             this.winH = document.documentElement.scrollHeight || document.body.scrollHeight;
         },
+        toTop:function(){
+            window.scrollTo(0,0);
+        },
         toBottom:function(){
-            window.scrollTo(this.winH,this.winH);
+            window.scrollTo(0,this.winH);
         }
     });
     var Language = Class.extend({
@@ -88,14 +156,18 @@
         push:function(code_piece){
             this.code.push(code_piece);
         },
-        render:function(){
+        render:function(loadNew){
             var s='<div class="request"><div class="request-time">'+this.time.substr(5,14)+'</div>'
                 +'<div class="request-items">';
             for(var i=0,len=this.code.length;i<len;i++){
                 s+=this.code[i];
             }
             s+='</div></div>';
-            $('.container').append(s);
+            if(loadNew) {
+                $('.container').append(s);
+            }else{
+                $('.container').prepend(s);
+            }
         }
 
     });
@@ -122,15 +194,57 @@
         },
         code:function(){
             if(this.language === 'num'){
-                return '<span class="php-num" id="code-i-'+this.iCode+'">'+JSON.stringify(this.log)+'</span>';
+                return '<span class="php-num" id="code-i-'+this.iCode+'">'+JSON.stringify(this.log)+'</span><br/>';
             }else if(this.language === 'bool'){
-                return '<span class="php-bool" id="code-i-'+this.iCode+'">'+(1===this.log?'true':'false')+'</span>';
+                return '<span class="php-bool" id="code-i-'+this.iCode+'">'+(1===this.log?'true':'false')+'</span><br/>';
             }else if(this.language === 'null'){
-                return '<span class="php-null" id="code-i-'+this.iCode+'">null</span>';
+                return '<span class="php-null" id="code-i-'+this.iCode+'">null</span><br/>';
             }else{
                 return '<code class="'+this.language+'" id="code-i-'+this.iCode+'">'+JSON.stringify(this.log)+'</code>';
             }
         }
     });
+    function today($withSep) {
+        var date = new Date();
+        var sep = "";
+        if($withSep){
+            sep = "-";
+        }
+        var month = date.getMonth() + 1;
+        var strDate = date.getDate();
+        if (month >= 1 && month <= 9) {
+            month = "0" + month;
+        }
+        if (strDate >= 0 && strDate <= 9) {
+            strDate = "0" + strDate;
+        }
+        return date.getFullYear()+sep  + month+sep  + strDate;
+    }
+    function genDate(year,month,day){
+        if (month >= 1 && month <= 9) {
+            month = "0" + month;
+        }
+        if (day >= 0 && day <= 9) {
+            day = "0" + day;
+        }
+        return ""+year +month+day;
+    }
+
+    function lazyLoad(loadPrev,loadNext) {
+        $(window).scroll(function(){
+            var scrollTop = $(this).scrollTop();
+            var scrollHeight = $(document).height();
+            var clientHeight = $(this).height();
+            if(scrollTop + clientHeight >= scrollHeight-2){
+                if(loadNext){
+                    loadNext();
+                }
+            }else if(scrollTop<=2){
+                if(loadPrev){
+                    loadPrev();
+                }
+            }
+        });
+    }
 </script>
 </html>

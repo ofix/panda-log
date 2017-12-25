@@ -93,3 +93,12 @@ tt, code, kbd, samp {
     margin-left:40px;
 }
 .hljs{word-break:break-all;overflow-x:visible;}
+#record{
+    font-size:24px;
+    color:#989581;
+    width:200px;
+    text-align:right;
+    position:fixed;
+    right:20px;
+    top:10px;
+}
