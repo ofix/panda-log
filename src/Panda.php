@@ -286,12 +286,12 @@ class Panda
     /*
      * @func 读取保存的日志信息
      */
-    public function decode($page_offset,$page_size=20,$asc=false){
+    public function decode($page_offset,$page_size=20,$asc=false,$date = ''){
         if($page_size <1){
             return [];
         }
         // 解析meta二进制文件
-        $metaFile = $this->getMetaFile();
+        $metaFile = $this->getMetaFile($date);
         if(!file_exists($metaFile)){
             return [];
         }
@@ -307,10 +307,13 @@ class Panda
         $arrMetaItem = self::decodeMetaItem($rawMeta,$pos->size/8);
         BinaryReader::close($hFile);
         // 解析data二进制文件
-        $logFile = $this->getLogFile();
+        $logFile = $this->getLogFile($date);
         $hFile = BinaryReader::open($logFile);
         $items = [];
         foreach($arrMetaItem as $k=>$v){
+            if($v['start']<=0 || $v['end']<=0){
+                continue;
+            }
             $items[] = $this->decodeLogData($hFile,$v['start'],$v['end']);
         }
         BinaryReader::close($hFile);
@@ -442,14 +445,22 @@ class Panda
         }
         return @mkdir($dir, $mode);
     }
-    protected function getMetaFile()
+    protected function getMetaFile($date='')
     {
-        $now = Date('Ymd', time());
+        if($date == '') {
+            $now = Date('Ymd', time());
+        }else{
+            $now = $date;
+        }
         return realpath($this->getDefaultSaveDir()) . DIRECTORY_SEPARATOR .'panda_meta_' . $now . '.idx';
     }
 
-    protected function getLogFile(){
-        $now = Date('Ymd', time());
+    protected function getLogFile($date=''){
+        if($date == '') {
+            $now = Date('Ymd', time());
+        }else{
+            $now = $date;
+        }
         return realpath($this->getDefaultSaveDir()) . DIRECTORY_SEPARATOR .'panda_data_'. $now . '.pda';
     }
 

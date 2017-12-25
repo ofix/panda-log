@@ -21,41 +21,19 @@ use common\models\UserCompany;
 class PandaTester
 {
     public static function debugTest(){
-//        $student = new \stdClass();
-//        $student->name = 'tom song';
-//        $student->family = ['father'=>'me',
-//            'mother'=>1];
-//        $student->water = ['things'=>['user_name','user_type'],
-//            'other'=>['sb','打几下']];
-//        Panda::instance()->log2('$things',$student->water['things'])
-//            ->log2('$water',$student);
         $wholesale_order = Dporder::findOne(['id'=>3240]);
-       // $wholesale_order = Dporder::find()->where(['id'=>3240]);
         Panda::instance()->log($wholesale_order);
         Panda::instance()->flush();
         return Panda::instance()->decode(0,10);
     }
-  public static function testBinaryReader(){
-//      for($i=0; $i<100;$i++) {
-//          self::testWriteBinary();
-//          self::testWriteBinary2();
-//          usleep(1000);
-//      }
-       return self::testReadBinary();
+  public static function testBinaryReader($date){
+       return self::testReadBinary($date);
+  }
 
-//      print_r(Lexer::splitUtf8Str('阿士大、x\00/*asdf//夫撒地方'));
-//      print_r(Lexer::splitUtf8Str(''));
-//      print_r(Lexer::splitUtf8Str('‘’341324ca凸(艹皿艹 )1324'));
-//      self::testLexer();
-//      die();
-
-
-//      $now['time'] = 1512403200;
-//      $time1 =self::ti($now);
-//      $time2 = self::ti($now);
-//      echo "time1 = ".$time1.'time2 ='.$time2;
-//      die();
-
+  public static function testReadBinary($date){
+       $panda = Panda::instance();
+       $data = $panda->decode(0,1000,false,$date);
+       return $data;
   }
 
   public static function testLexer(){
@@ -85,50 +63,6 @@ class PandaTester
       print_r((new Lexer($str10))->parseArgumentList());
       print_r((new Lexer($str11))->parseArgumentList());
   }
-  public static function ti(&$now){
-      $time1 = date('Y-m-d',$now['time']);
-      return $time1;
-  }
-
-  public static function testReadBinary(){
-      $panda = Panda::instance();
-      $data = $panda->decode(0,40);
-      return $data;
-  }
-
-  public static function what_can_i_do(){
-      $o = new \stdClass();
-      $o->is_array = ['a'=>'things','b'=>'no-problem'];
-      Panda::instance()->log2('$null',null);
-      Panda::instance()->log2('$true',true);
-      Panda::instance()->log2('$false',false);
-      Panda::instance()->flush();
-  }
-
-  public static function testWriteBinary2(){
-      $integer_val = 123456;
-      $double_value = 823234234.4343;
-      $favorite_things = array ( 0 => array ('id' => '13', 'name' => '乒乓球'),
-                      1 => array ('id' => '17', 'name' => '篮球'),
-          2 => array ('id' => '17', 'name' => '篮球'),
-          3 => array ('id' => '17', 'name' => '篮球'),
-          4 => array ('id' => '17', 'name' => '篮球'),
-          5 => array ('id' => '17', 'name' => '篮球'),
-          6 => array ('id' => '17', 'name' => '篮球'),
-          7 => array ('id' => '17', 'name' => '篮球'));
-      $panda = Panda::instance();
-      $panda->log($integer_val);
-      $panda->log($favorite_things);
-      $panda->log($double_value);
-      $panda->flush();
-//      $panda = Panda::instance();
-
-
-//      echo '写入文件起始地址:0x'.dechex($panda->getFlushBegin()).'H'.PHP_EOL;
-//      echo '写入文件结束地址:0x'.dechex($panda->getFlushEnd()).'H'.PHP_EOL;
-//      echo '写入文件字节数量:'.dechex($panda->getFlushBytes()).PHP_EOL;
-  }
-
   public static function testWriteBinary(){
           $array = ['中国武汉', '深圳福田国际金融中心'];
           $distributor_order = new \stdClass();

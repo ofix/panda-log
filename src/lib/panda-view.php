@@ -7,12 +7,15 @@
     <title>熊猫日志</title>
     <link href="/company/panda-log/highlight/styles/monokai.css" rel="stylesheet" type="text/css"/>
     <link href="/company/panda-log/panda.css" rel="stylesheet">
+    <link href="/company/panda-log/date.css" rel="stylesheet">
+    <script src="/company/panda-log/date.js"></script>
     <script src="/company/panda-log/jquery-3.2.1.min.js"></script>
     <script src="/company/panda-log/jquery.class.js"></script>
     <script src="/company/panda-log/highlight/highlight.pack.js"></script>
     <script src="/company/panda-log/clipboard.min.js"></script>
 </head>
 <body>
+    <div id="date"></div>
     <div class="container">
     </div>
 </body>
@@ -24,8 +27,33 @@
         e.clearSelection();
     });
     var iCode =0;
-    $(document).ready(function(){
-        $.post('/panda/index',{},function(response){
+    function today($withSep) {
+        var date = new Date();
+        var sep = "";
+        if($withSep){
+            sep = "-";
+        }
+        var month = date.getMonth() + 1;
+        var strDate = date.getDate();
+        if (month >= 1 && month <= 9) {
+            month = "0" + month;
+        }
+        if (strDate >= 0 && strDate <= 9) {
+            strDate = "0" + strDate;
+        }
+        return date.getFullYear()+sep  + month+sep  + strDate;
+    }
+    function genDate(year,month,day){
+        if (month >= 1 && month <= 9) {
+            month = "0" + month;
+        }
+        if (day >= 0 && day <= 9) {
+            day = "0" + day;
+        }
+        return ""+year +month+day;
+    }
+    function requestLogData(date){
+        $.post('/panda/index',{"date":date},function(response){
             if(response.data.length===0) return;
             var records = response.data.records;
             for(var i=0,request_count = records.length; i<request_count;i++){
@@ -33,7 +61,7 @@
                 for(var j=0,log_count = records[i].length; j<log_count;j++){
                     var language = new Language(records[i][j].type);
                     var codePiece = new CodePiece(language.parse(),
-                       records[i][j].log,records[i][j].debug);
+                        records[i][j].log,records[i][j].debug);
                     request.push(codePiece.render());
                 }
                 request.render();
@@ -45,6 +73,17 @@
             var sb = new ScrollBar();
             sb.toBottom();
         },'json');
+    }
+    $(document).ready(function(){
+        var date = new Schedule({
+            el: '#date', //指定包裹元素（可选）
+            date: today(true), //生成指定日期日历（可选）
+            clickCb: function(y, m, d) {
+                $(".container").empty();
+                requestLogData(genDate(y,m,d));
+            }
+        });
+        requestLogData(today(false));
     });
 
     var ScrollBar = Class.extend({
