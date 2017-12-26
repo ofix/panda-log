@@ -1,37 +1,23 @@
-## Welcome to GitHub Pages
+### Panda Log Usage
 
-You can use the [editor on GitHub](https://github.com/ofix/panda-log/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
-
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
-
-### Markdown
-
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
+> panda log is a debugger tool for flushing program runtime data to binary log file.
+It is lightweight,easy-to-use and interface user-friendly.Just enjoy it.
+ 
+```php
+ // log string
+ $str = "test for string";
+ Panda::instance()->log2("str",$str);
+ // log sql
+ $sql = (new Query())->select("some_table")->where(["id"=>4032]);
+ Panda::instance()->log2("sql",$sql);
+ // log number
+ $num = 323;
+ Panda::instance()->log2("num",$num);
+ 
+ //flush all above records to log file please call following code
+ Panda::instance()->flush();
 ```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/ofix/panda-log/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
 
 ### Support or Contact
 
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+Having trouble with panda log? contact me with QQ 981326632
