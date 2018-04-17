@@ -1,0 +1,21 @@
+{
+    "name": "ofix/panda-log",
+    "description": "a yii2-extension for log info in debug mode",
+    "type": "yii2-extension",
+    "require-dev": {
+        "yiisoft/yii2": ">2.0.0"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "codelighter",
+            "email": "shb8845369@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload-dev": {
+        "psr-4": {
+            "ofix\\panda\\": ""
+        }
+    }
+}
