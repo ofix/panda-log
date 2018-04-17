@@ -14,7 +14,7 @@
  * @Time      21:57
  *
  */
-namespace ofix\panda\core;
+namespace ofix\PandaLog\core;
 class PandaHeader extends BinaryPacket
 {
     public static $magic_number  = [BinaryType::UNSIGNED_LONG,19880919];

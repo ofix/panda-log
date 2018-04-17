@@ -14,7 +14,7 @@
  * @Date: 2017/12/4
  * @Time: 21:37
  */
-namespace ofix\panda\core;
+namespace ofix\PandaLog\core;
 
 class Lexer
 {

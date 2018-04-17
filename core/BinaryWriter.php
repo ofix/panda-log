@@ -14,7 +14,7 @@
  * @Time      18:35
  *
  */
-namespace ofix\panda\core;
+namespace ofix\PandaLog\core;
 class BinaryWriter{
     public static function flush($hFile,BinaryPacket $packet,$offset){
         $_data = '';

@@ -15,7 +15,7 @@
  *
  * @desc binary stream is a wrapper for PHP pack/unpack functions
  */
-namespace ofix\panda\core;
+namespace ofix\PandaLog\core;
 class BinaryStream
 {
     private $data = '';

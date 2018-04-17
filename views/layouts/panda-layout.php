@@ -1,6 +1,6 @@
 <?php
 use yii\helpers\Html;
-$asset = ofix\panda\PandaAsset::register($this);
+$asset = ofix\PandaLog\PandaAsset::register($this);
 $url = $this->context->pandaViewUrl;
 $this->registerJs("var pandaViewUrl='".$url."';",\yii\web\View::POS_BEGIN);
 ?>

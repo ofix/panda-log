@@ -16,7 +16,7 @@
  * @desc binary packet is a data storage convention
  */
 
-namespace ofix\panda\core;
+namespace ofix\PandaLog\core;
 class BinaryPacket
 {
 }

@@ -14,9 +14,9 @@
  * @Time      22:20
  *
  */
-namespace ofix\panda\core;
+namespace ofix\PandaLog\core;
 
-use ofix\panda\Panda;
+use ofix\PandaLog\Panda;
 
 class PandaReader
 {

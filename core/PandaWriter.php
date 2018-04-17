@@ -14,7 +14,7 @@
  * @Time      17:10
  */
 
-namespace ofix\panda\core;
+namespace ofix\PandaLog\core;
 
 class PandaWriter
 {

@@ -5,7 +5,7 @@
  * @license http://www.yiiframework.com/license/
  */
 
-namespace ofix\panda;
+namespace ofix\PandaLog;
 
 use Yii;
 use yii\base\BootstrapInterface;
@@ -19,7 +19,7 @@ use yii\base\BootstrapInterface;
  * return [
  *     'bootstrap' => ['panda-log'],
  *     'modules' => [
- *         'panda-log' => ['class' => 'ofix\panda\Module::Class'],
+ *         'panda-log' => ['class' => 'ofix\PandaLog\Module::Class'],
  *     ],
  * ]
  * ~~~
@@ -29,18 +29,18 @@ use yii\base\BootstrapInterface;
  * can only be accessed by localhost. You may configure its [[allowedIPs]] property if
  * you want to make it accessible on other machines.
  *
- * With the above configuration, you will be able to access GiiModule in your browser using
- * the URL `http://localhost/path/to/index.php?r=gii`
+ * With the above configuration, you will be able to access panda-log in your browser using
+ * the URL `http://localhost/path/to/index.php?r=panda-log`
  *
  * If your application enables [[\yii\web\UrlManager::enablePrettyUrl|pretty URLs]],
- * you can then access Gii via URL: `http://localhost/path/to/index.php/gii`
+ * you can then access panda-log via URL: `http://localhost/path/to/index.php/panda-log`
  *
  * @author code lighter <981326632@qq.com>
  * @since 2.0
  */
 class Module extends \yii\base\Module implements BootstrapInterface
 {
-    public $controllerNamespace = 'ofix\panda\controllers';
+    public $controllerNamespace = 'ofix\PandaLog\controllers';
     public $log_dir = '';
 
     public function bootstrap($app)

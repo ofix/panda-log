@@ -15,7 +15,7 @@
  *
  * @desc binaryItem is the minimum data for packet.
  */
-namespace ofix\panda\core;
+namespace ofix\PandaLog\core;
 class BinaryItem{
     public $data;
     public $type;

@@ -14,7 +14,7 @@
  * @Time      13:40
  */
 
-namespace ofix\panda\core;
+namespace ofix\PandaLog\core;
 /* all record saved format as follows
  * 4 byte record length|1 byte record type|remain bytes are custom
  * different record type data may need different decode method

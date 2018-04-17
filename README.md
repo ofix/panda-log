@@ -1,8 +1,18 @@
-### Panda Log Usage
+### Panda Log Document
 
-> panda log is a debugger tool for flushing program runtime data to binary log file. 
-It is lightweight, easy-to-use and interface user-friendly. Just enjoy it.
+> panda-log is a debugger tool for flushing program runtime data to binary log file.
+ It depends on Yii2 framework, it's lightweight, easy-to-use and user-friendly. Just enjoy it.
  
+**Config panda-log as a module in `Yii2`  framework**
+```php 
+  'bootstrap' => ['panda-log'],
+  $config['modules']['panda-log'] = [
+      'class' => ofix\PandaLog\Module::class,
+      'log_dir'=> '@backend/runtime/panda-log/', // log_dir is the directory panda-log files located on
+  ];
+```
+
+**How to use panda-log in PHP**
 ```php
  // log string
  $str = "test for string";
@@ -26,6 +36,14 @@ It is lightweight, easy-to-use and interface user-friendly. Just enjoy it.
  Panda::instance()->flush();
 ```
 
-### Support or Contact
+**View panda-log data in browser**
+1. With the above configuration, you will be able to access panda-log in your browser using
+ the URL `http://localhost/path/to/index.php?r=panda-log`
 
-Having trouble with panda log? contact me with QQ 981326632
+2. If your application enables [[\yii\web\UrlManager::enablePrettyUrl|pretty URLs]],
+you can then access panda-log via URL: `http://localhost/path/to/index.php/panda-log`
+
+
+**Support or Contact**
+
+Having trouble with panda-log usage? contact me with QQ|WeChat 981326632 or send email to 981326632@qq.com

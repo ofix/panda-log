@@ -15,7 +15,7 @@
  *
  * @desc binary packet is a data storage convention
  */
-namespace ofix\panda\core;
+namespace ofix\PandaLog\core;
 class BinaryType{
     const STRING           = 'a';   // NUL-padded string
     const STRING2          = 'A';   // SPACE-padded string

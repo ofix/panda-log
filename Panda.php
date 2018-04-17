@@ -21,23 +21,23 @@
  * 03. it can also format object and string rely on front-end CodeMore plugin.
  * 04. The panda log will split every request in a block and make it user-friendly for reading.
  */
-namespace ofix\panda;
+namespace ofix\PandaLog;
 
-use ofix\panda\core\BinaryReader;
-use ofix\panda\core\BinaryStream;
-use ofix\panda\core\BinaryWriter;
-use ofix\panda\core\Endian;
-use ofix\panda\core\PandaHeader;
-use ofix\panda\core\Record;
-use ofix\panda\core\RecordArray;
-use ofix\panda\core\RecordBool;
-use ofix\panda\core\RecordLogin;
-use ofix\panda\core\RecordNull;
-use ofix\panda\core\RecordNumber;
-use ofix\panda\core\RecordObject;
-use ofix\panda\core\RecordRequest;
-use ofix\panda\core\RecordSql;
-use ofix\panda\core\RecordString;
+use ofix\PandaLog\core\BinaryReader;
+use ofix\PandaLog\core\BinaryStream;
+use ofix\PandaLog\core\BinaryWriter;
+use ofix\PandaLog\core\Endian;
+use ofix\PandaLog\core\PandaHeader;
+use ofix\PandaLog\core\Record;
+use ofix\PandaLog\core\RecordArray;
+use ofix\PandaLog\core\RecordBool;
+use ofix\PandaLog\core\RecordLogin;
+use ofix\PandaLog\core\RecordNull;
+use ofix\PandaLog\core\RecordNumber;
+use ofix\PandaLog\core\RecordObject;
+use ofix\PandaLog\core\RecordRequest;
+use ofix\PandaLog\core\RecordSql;
+use ofix\PandaLog\core\RecordString;
 use yii\base\Model;
 use yii\db\Query;
 date_default_timezone_set('Asia/Shanghai');

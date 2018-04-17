@@ -13,7 +13,7 @@
  * @Date      2017/11/29
  * @Time      18:35
  */
-namespace ofix\panda\core;
+namespace ofix\PandaLog\core;
 class BinaryReader{
     public static function getRawBytesFromFile($hFile,$offset,$byte_count){
         if($offset <0){

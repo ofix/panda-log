@@ -1,5 +1,5 @@
 <?php
-namespace ofix\panda;
+namespace ofix\PandaLog;
 
 use yii\web\AssetBundle;
 

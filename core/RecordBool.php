@@ -14,7 +14,7 @@
  * @Time      13:44
  */
 
-namespace ofix\panda\core;
+namespace ofix\PandaLog\core;
 
 class RecordBool extends Record
 {

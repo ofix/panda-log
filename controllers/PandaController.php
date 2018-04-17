@@ -5,9 +5,9 @@
  * @license http://www.yiiframework.com/license/
  */
 
-namespace ofix\panda\controllers;
+namespace ofix\PandaLog\controllers;
 
-use ofix\panda\core\PandaReader;
+use ofix\PandaLog\core\PandaReader;
 use yii\web\Controller;
 use Yii;
 use yii\web\Response;

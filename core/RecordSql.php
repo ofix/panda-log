@@ -13,7 +13,7 @@
  * @Date      2017/12/2
  * @Time      14:23
  */
-namespace ofix\panda\core;
+namespace ofix\PandaLog\core;
 
 use yii\db\ActiveRecord;
 use yii\db\Query;

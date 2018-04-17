@@ -13,7 +13,7 @@
  * @Date      2017/12/2
  * @Time      13:40
  */
-namespace ofix\panda\core;
+namespace ofix\PandaLog\core;
 use common\models\Company;
 use common\models\User;
 use common\models\UserCompany;
