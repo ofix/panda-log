@@ -125,7 +125,7 @@ class Log
     {
         if ($e instanceof \Exception) {
             $debug = debug_backtrace();
-            self::$debug_trace[] = $this->trace($debug[0], $debug[1], $name);
+            self::$debug_trace[] = $this->trace($debug[0], $debug[2], $name);
             $o = new \stdClass();
             $o->message = $e->getMessage();
             $o->file = $e->getFile();
@@ -140,15 +140,15 @@ class Log
 
     protected function log_2($name,$content){
         $debug = debug_backtrace();
-        self::$debug_trace[] = $this->trace($debug[0],$debug[1],$name);
+        self::$debug_trace[] = $this->trace($debug[0],$debug[2],$name);
         $this->logData($content);
         return $this;
     }
     protected function log_1($content = '')
     {
         $debug = debug_backtrace();
-        $para_name=$this->reflectFunctionParameter($debug[1]['class'],$debug[0]['line']);
-        self::$debug_trace[] = $this->trace($debug[0],$debug[1],$para_name);
+        $para_name=$this->reflectFunctionParameter($debug[2]['class'],$debug[1]['line']);
+        self::$debug_trace[] = $this->trace($debug[0],$debug[2],$para_name);
         $this->logData($content);
         return $this;
     }
