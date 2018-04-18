@@ -345,7 +345,7 @@ class Log
         $hFile = BinaryReader::open($logFile);
         $items = [];
         foreach($arrMetaItem as $k=>$v){
-            if($v['start']<=0 || $v['end']<=0){
+            if($v['start']<0 || $v['end']<=0){
                 continue;
             }
             $items[] = $this->decodeLogData($hFile,$v['start'],$v['end']);
