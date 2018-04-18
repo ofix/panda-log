@@ -2,6 +2,13 @@
 
 > panda-log is a debugger tool for flushing program runtime data to binary log file.
  It depends on Yii2 framework, it's lightweight, easy-to-use and user-friendly. Just enjoy it.
+
+**install panda-log via composer
+
+
+```php
+composer require "ofix/panda-log:1.*"
+```
  
 **Config panda-log as a module in `Yii2`  framework**
 ```php 
