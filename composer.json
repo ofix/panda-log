@@ -1,18 +1,25 @@
 {
     "name": "ofix/panda-log",
-    "description": "a yii2-extension for log info in debug mode",
+    "description": "panda-log is a yii2-extension for log and view debug information",
     "type": "yii2-extension",
-    "require-dev": {
-        "yiisoft/yii2": ">2.0.0"
+    "require": {
+        "yiisoft/yii2": ">=2.0.0"
     },
+    "require-dev": {
+        "yiisoft/yii2": ">=2.0.0"
+    },
+    "keywords": ["logging","yii2-extension","log","debug","panda-log"],
     "license": "MIT",
     "authors": [
         {
-            "name": "codelighter",
-            "email": "shb8845369@gmail.com"
+            "name": "code lighter",
+            "email": "shb8845369@gmail.com",
+            "homepage":"https://github.com/ofix"
         }
     ],
+    "version": "1.0.1",
     "minimum-stability": "dev",
+    "prefer-stable": true,
     "autoload-dev": {
         "psr-4": {
             "ofix\\PandaLog\\": ""

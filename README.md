@@ -16,24 +16,24 @@
 ```php
  // log string
  $str = "test for string";
- Panda::instance()->log2("str",$str);
+ Panda::log("str",$str);
  // log sql
  $sql = (new Query())->select("some_table")->where(["id"=>4032]);
- Panda::instance()->log2("sql",$sql);
+ Panda::log("sql",$sql);
  // log number
  $num = 323;
- Panda::instance()->log2("num",$num);
+ Panda::log("num",$num);
  // log object
  $student = new \stdClass();
  $student->name = "tom";
  $student->age = 28;
- Panda::instance()->log2("student",$student);
+ Panda::log("student",$student);
  // log array
  $arr = ["id"=>3223,"mobile"=>13993434];
- Panda::instance()->log2("arr",$arr);
+ Panda::log("arr",$arr);
  
  //flush all above records to log file please call following code
- Panda::instance()->flush();
+ Panda::flush();
 ```
 
 **View panda-log data in browser**

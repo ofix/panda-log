@@ -16,12 +16,12 @@
  */
 namespace ofix\PandaLog\core;
 
-use ofix\PandaLog\Panda;
+use ofix\PandaLog\Log;
 
 class PandaReader
 {
   public static function query($date, $page_offset, $page_size,$asc){
-      $panda = Panda::instance();
+      $panda = Log::instance();
       $data = $panda->decode($page_offset,$page_size,$asc,$date);
       return $data;
   }

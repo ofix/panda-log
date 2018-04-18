@@ -54,7 +54,7 @@ class Module extends \yii\base\Module implements BootstrapInterface
     }
 
     public function init(){
-        Panda::instance()->setDefaultSaveDir($this->log_dir);
+        Panda::setDefaultSaveDir($this->log_dir);
     }
 
     public function beforeAction($action)
