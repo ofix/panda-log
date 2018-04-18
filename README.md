@@ -14,7 +14,7 @@
 **Install panda-log via composer**
 
 ```php
-composer require "ofix/panda-log:1.*"
+composer require "ofix/panda-log:~1.2"
 ```
  
 **Config panda-log as a module in `Yii2`  framework**
