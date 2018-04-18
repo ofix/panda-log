@@ -1,7 +1,9 @@
 ### Panda Log Document
 
-> panda-log is a debugger tool for flushing program runtime data to binary log file.
- It depends on Yii2 framework, it's lightweight, and easy-to-use. Just enjoy it.
+> panda-log is a debugger tool for flushing log data to binary file.
+ For each Http/Https Request, the bussiness code lines may distribute in different files and different functions,
+ **panda-log** would track all the code execution stream in one request, no matter you call `Panda::log` in which function, you only need call `Panda::flush` once before send response data to client, and all the log records you call `Panda::log` would be populated and be flushed to binary file.
+ It depends on Yii2 framework, it's lightweight, and easy-to-use. Just enjoy your debug journey.
 
 **Panda-log Screen Shot**
 
@@ -44,7 +46,7 @@ composer require "ofix/panda-log:1.*"
  $arr = ["id"=>3223,"mobile"=>13993434];
  Panda::log("arr",$arr);
  
- //flush all above records to log file please call following code
+ //flush all above records to log file please call following code,otherwise it would not save in files.
  Panda::flush();
 ```
 
