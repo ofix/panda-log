@@ -1,7 +1,7 @@
 ### Panda Log Document
 
 > panda-log is a debugger tool for flushing program runtime data to binary log file.
- It depends on Yii2 framework, it's lightweight, easy-to-use and user-friendly. Just enjoy it.
+ It depends on Yii2 framework, it's lightweight, and easy-to-use. Just enjoy it.
 
 **Panda-log Screen Shot**
 
