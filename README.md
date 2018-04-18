@@ -37,13 +37,14 @@
 ```
 
 **View panda-log data in browser**
-1. With the above configuration, you will be able to access panda-log in your browser using
+>With the above configuration, you will be able to access panda-log in your browser using
  the URL `http://localhost/path/to/index.php?r=panda-log`
 
-2. If your application enables [[\yii\web\UrlManager::enablePrettyUrl|pretty URLs]],
+>If your application enables [[\yii\web\UrlManager::enablePrettyUrl|pretty URLs]],
 you can then access panda-log via URL: `http://localhost/path/to/index.php/panda-log`
 
 
 **Support or Contact**
 
-Having trouble with panda-log usage? contact me with QQ|WeChat 981326632 or send email to 981326632@qq.com
+Having trouble with panda-log usage? 
+contact me with QQ|WeChat `981326632` or send email to 981326632@qq.com
