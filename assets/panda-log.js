@@ -180,6 +180,10 @@ panda = (function ($,Clipboard,hljs) {
             }else if(this.language === 'null'){
                 return '<span class="php-null" id="code-i-'+this.iCode+'">null</span><br/>';
             }else{
+                if(typeof(this.log) === 'string' && (this.log).substr(0,5) === '<xml>'){
+                    this.log = (this.log).replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                    return '<code class="xml" id="code-i-'+this.iCode+'">'+ (this.log)+'</code>';
+                }
                 return '<code class="'+this.language+'" id="code-i-'+this.iCode+'">'+JSON.stringify(this.log)+'</code>';
             }
         }
