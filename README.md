@@ -7,9 +7,9 @@
 
 **Panda-log Screen Shot**
 
-![PHP code example](http://github.com/ofix/panda-log/raw/master/assets/panda_log_1.png)
+![PHP code example](https://github.com/ofix/panda-log/raw/master/assets/panda_log_1.png)
 
-![View debug information in browser](http://github.com/ofix/panda-log/raw/master/assets/panda_log_2.png) 
+![View debug information in browser](https://github.com/ofix/panda-log/raw/master/assets/panda_log_2.png) 
 
 **Install panda-log via composer**
 
