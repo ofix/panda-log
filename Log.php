@@ -178,11 +178,12 @@ class Log
     /*
      * 保存文件日志
      */
-    protected function log_flush()
+    protected function log_flush($flushFilePermission)
     {
         try {
             $this->saveMeta(); //保存元数据
             $logFile = $this->getLogFile();
+            $metaFile = $this->getMetaFile();
             if (count(self::$data)) {
                 //写入二进制流
                 $hFile = BinaryWriter::open($logFile);
@@ -197,6 +198,10 @@ class Log
                 BinaryWriter::append($hFile, $bytes);
                 fflush($hFile); //立即刷新到磁盘文件
                 BinaryWriter::close($hFile);
+                if($flushFilePermission){
+                    chmod($logFile, 0777);
+                    chmod($metaFile,0777);
+                }
             }
             self::$data = []; //存盘的时候，必须释放掉变量内存,因为这个是单例
             //否则循环测试写入的时候，会出问题。

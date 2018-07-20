@@ -30,7 +30,7 @@ class Panda extends Log
     public static function log($name,$content){
         self::instance()->log_2($name,$content);
     }
-    public static function flush(){
-        self::instance()->log_flush();
+    public static function flush($flushFilePermission=false){
+        self::instance()->log_flush($flushFilePermission);
     }
 }
